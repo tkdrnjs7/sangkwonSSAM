@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>오늘의 급식 메뉴 정하기 - 수정본</title>
+<style>
+  :root{
+    --bg:#f7f4ea; --panel:#fffdf7; --green:#3f6b4f; --yellow:#f4d97a;
+    --red:#d96b5f; --text:#2f352f; --muted:#7b817a; --line:#e7dfcf;
+    --blue:#eaf3f8; --mint:#eef6ef;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left,rgba(244,217,122,.26),transparent 26%),
+      radial-gradient(circle at top right,rgba(95,138,109,.16),transparent 30%),
+      var(--bg);
+  }
+  button{font:inherit}
+  .wrap{width:min(1240px,calc(100% - 24px));margin:24px auto 40px}
+  .top{
+    background:linear-gradient(135deg,#355b44,#4d7a5a);
+    color:#fff;border-radius:28px;padding:28px;
+    box-shadow:0 14px 40px rgba(55,65,55,.10);
+  }
+  .title-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+  .eyebrow{font-size:14px;opacity:.82;margin-bottom:8px}
+  h1{margin:0;font-size:clamp(29px,4vw,45px);letter-spacing:-1.5px}
+  .desc{margin:10px 0 0;line-height:1.75;color:rgba(255,255,255,.88)}
+  .challenge{
+    display:inline-block;margin-top:14px;padding:8px 12px;border-radius:999px;
+    background:rgba(255,255,255,.13);font-size:13px;font-weight:800
+  }
+  .budget-box{
+    min-width:255px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:18px
+  }
+  .budget-label{font-size:13px;opacity:.8}
+  .budget-main{font-size:32px;font-weight:900;margin-top:4px}
+  .progress{height:11px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;margin-top:12px}
+  .progress>div{width:0;height:100%;background:var(--yellow);border-radius:999px;transition:.2s}
+  .budget-bottom{margin-top:10px;display:flex;justify-content:space-between;font-size:13px}
+
+  .main-grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(340px,.85fr);gap:22px;margin-top:22px}
+  .panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:22px;
+    box-shadow:0 8px 26px rgba(55,65,55,.06)
+  }
+  .panel-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+  .panel-title h2{margin:0;font-size:22px}
+  .small-note{font-size:13px;color:var(--muted)}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{
+    border:0;padding:11px 16px;border-radius:999px;background:#eee9dc;color:#555;
+    cursor:pointer;font-weight:800
+  }
+  .tab.active{background:var(--green);color:#fff}
+
+  .menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+  .menu-card{
+    position:relative;border:1px solid var(--line);background:#fff;border-radius:20px;
+    padding:16px;min-height:190px;cursor:pointer;text-align:left;transition:.15s
+  }
+  .menu-card:hover{transform:translateY(-2px);border-color:#8fb19b}
+  .menu-card.selected{border:2px solid var(--green);background:#f0f8f2}
+  .menu-card.selected:after{
+    content:"✓";position:absolute;right:11px;top:10px;width:28px;height:28px;border-radius:50%;
+    display:grid;place-items:center;background:var(--green);color:#fff;font-weight:900
+  }
+  .emoji{font-size:36px}
+  .menu-name{font-weight:900;margin-top:7px;font-size:16px}
+  .menu-price{margin-top:5px;color:var(--green);font-weight:900;font-size:17px}
+  .menu-desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+  .nutrients{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .nutrient{
+    font-size:11px;padding:4px 7px;border-radius:999px;background:var(--blue);color:#476477;font-weight:700
+  }
+  .nutrient.green{background:var(--mint);color:#496a4d}
+
+  .tray-wrap,.result-tray-wrap{
+    background:linear-gradient(145deg,#e6e8e7,#cdd1cf);border-radius:28px;padding:16px;
+    border:1px solid #c1c5c2;
+    box-shadow:inset 0 2px 8px rgba(255,255,255,.65), inset 0 -4px 10px rgba(80,90,84,.12)
+  }
+  .tray{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-rows:120px 150px;
+    gap:10px;
+  }
+  .tray-slot{
+    border-radius:24px;background:linear-gradient(145deg,#f8f8f6,#e7e9e6);border:1px solid #c9cecb;
+    box-shadow:inset 0 3px 8px rgba(80,90,84,.15);padding:10px 8px;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-width:0
+  }
+  .tray-slot.rice{grid-column:1 / span 2; grid-row:2;}
+  .tray-slot.soup{grid-column:3 / span 2; grid-row:2;}
+  .slot-label{font-size:12px;color:#7f8780;margin-bottom:6px}
+  .slot-emoji{font-size:32px}
+  .slot-name{font-weight:900;margin-top:5px;font-size:14px;word-break:keep-all}
+  .slot-price{margin-top:4px;font-size:12px;color:#6f756f;font-weight:700}
+
+  .summary{margin-top:18px}
+  .summary-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .rule-box{margin-top:18px;background:#f8f5ed;border-radius:18px;padding:14px}
+  .rule{display:flex;align-items:center;gap:9px;font-size:14px;padding:6px 0}
+  .dot{width:22px;height:22px;border-radius:50%;background:#ded9cf;display:grid;place-items:center;font-size:12px}
+  .rule.ok .dot{background:#dcecdf;color:#2f6b48}
+  .message{margin-top:16px;padding:14px 15px;border-radius:16px;background:#eef3ed;line-height:1.6;font-size:14px}
+  .message.warn{background:#fff0ed;color:#9c3b31}
+  .tip{
+    margin-top:12px;padding:12px;border-radius:14px;background:#fff8df;font-size:12px;line-height:1.6;color:#6f602f
+  }
+  .actions{display:flex;gap:10px;margin-top:16px}
+  .btn{border:0;border-radius:16px;padding:14px 18px;cursor:pointer;font-weight:900;min-height:48px}
+  .btn.primary{flex:1;background:var(--green);color:#fff}
+  .btn.primary:disabled{opacity:.35;cursor:not-allowed}
+  .btn.secondary{background:#eee9dc;color:#4f544f}
+
+  .result{
+    display:none;margin-top:22px;background:linear-gradient(135deg,#fff9df,#eef7ef);
+    border:1px solid #e4d89a;border-radius:26px;padding:24px;text-align:center
+  }
+  .result.show{display:block}
+  .result-emoji{font-size:58px}
+  .result h2{margin:8px 0;font-size:26px}
+  .result p{margin:5px 0;color:#666}
+  .result-total{margin-top:12px;font-size:24px;font-weight:900;color:var(--green)}
+  .result-layout{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:start;margin-top:18px;text-align:left
+  }
+  .result-card{
+    background:rgba(255,255,255,.65);border:1px solid #efe3aa;border-radius:22px;padding:18px
+  }
+  .result-card h3{margin:0 0 12px;font-size:18px;text-align:center}
+  .result-list{display:grid;gap:10px}
+  .result-item{
+    display:flex;justify-content:space-between;gap:12px;padding:11px 12px;
+    background:#fffdf6;border-radius:14px;border:1px solid #eadfba;font-size:14px
+  }
+  .result-item b{font-size:15px}
+  .result-actions{display:flex;justify-content:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+  @media(max-width:980px){
+    .main-grid{grid-template-columns:1fr}
+    .title-row{flex-direction:column}
+    .budget-box{width:100%;min-width:0}
+    .result-layout{grid-template-columns:1fr}
+  }
+  @media(max-width:760px){
+    .wrap{width:min(100% - 14px,1240px);margin-top:8px}
+    .top,.panel,.result{border-radius:20px}
+    .top{padding:20px}
+    .panel{padding:16px}
+    .menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .tray{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,120px)}
+    .tray-slot.rice{grid-column:auto;grid-row:auto}
+    .tray-slot.soup{grid-column:auto;grid-row:auto}
+    .actions{flex-direction:column}
+  }
+  @media(max-width:460px){
+    .menu-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="top">
+    <div class="title-row">
+      <div>
+        <div class="eyebrow">🍱 오늘은 내가 급식 영양사!</div>
+        <h1>급식 메뉴를 정해 보세요</h1>
+        <p class="desc">예산 <b>4,000원</b> 안에서 <b>밥 1개 · 국 1개 · 반찬 3개 · 보조식 1개</b>를 골라 나만의 급식을 완성하세요.</p>
+        <div class="challenge">💡 비싼 메뉴만 고르면 예산을 넘어요. 가격과 영양을 함께 생각해 보세요!</div>
+      </div>
+
+      <div class="budget-box">
+        <div class="budget-label">남은 예산</div>
+        <div class="budget-main" id="remainTop">4,000원</div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div class="budget-bottom"><span id="usedTop">사용 0원</span><span>총 4,000원</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main-grid">
+    <section class="panel">
+      <div class="panel-title">
+        <div>
+          <h2>메뉴 선택</h2>
+          <div class="small-note">가격과 영양 포인트를 비교하며 선택해 보세요.</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-cat="밥">🍚 밥</button>
+        <button class="tab" data-cat="국">🥣 국</button>
+        <button class="tab" data-cat="반찬">🥢 반찬</button>
+        <button class="tab" data-cat="보조식">🍎 보조식</button>
+      </div>
+
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-title">
+        <div>
+          <h2>내 급식판</h2>
+          <div class="small-note">위쪽 4칸은 반찬 3개와 보조식, 아래쪽은 밥과 국입니다.</div>
+        </div>
+      </div>
+
+      <div class="tray-wrap">
+        <div class="tray">
+          <div class="tray-slot">
+            <div class="slot-label">반찬 1</div>
+            <div class="slot-emoji" id="side0Emoji">🥢</div>
+            <div class="slot-name" id="side0Name">미선택</div>
+            <div class="slot-price" id="side0Price"></div>
+          </div>
+          <div class="tray-slot">
+            <div class="slot-label">반찬 2</div>
+            <div class="slot-emoji" id="side1Emoji">🥢</div>
+            <div class="slot-name" id="side1Name">미선택</div>
+            <div class="slot-price" id="side1Price"></div>
+          </div>
+          <div class="tray-slot">
+            <div class="slot-label">반찬 3</div>
+            <div class="slot-emoji" id="side2Emoji">🥢</div>
+            <div class="slot-name" id="side2Name">미선택</div>
+            <div class="slot-price" id="side2Price"></div>
+          </div>
+          <div class="tray-slot">
+            <div class="slot-label">보조식</div>
+            <div class="slot-emoji" id="extraEmoji">🍎</div>
+            <div class="slot-name" id="extraName">미선택</div>
+            <div class="slot-price" id="extraPrice"></div>
+          </div>
+
+          <div class="tray-slot rice">
+            <div class="slot-label">밥</div>
+            <div class="slot-emoji" id="riceEmoji">🍚</div>
+            <div class="slot-name" id="riceName">미선택</div>
+            <div class="slot-price" id="ricePrice"></div>
+          </div>
+          <div class="tray-slot soup">
+            <div class="slot-label">국</div>
+            <div class="slot-emoji" id="soupEmoji">🥣</div>
+            <div class="slot-name" id="soupName">미선택</div>
+            <div class="slot-price" id="soupPrice"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-row"><span>사용 금액</span><b id="usedPrice">0원</b></div>
+        <div class="summary-row"><span>남은 금액</span><b id="remainPrice">4,000원</b></div>
+      </div>
+
+      <div class="rule-box">
+        <div class="rule" id="ruleRice"><span class="dot">○</span><span>밥 1개 선택</span></div>
+        <div class="rule" id="ruleSoup"><span class="dot">○</span><span>국 1개 선택</span></div>
+        <div class="rule" id="ruleSide"><span class="dot">○</span><span>반찬 3개 선택</span></div>
+        <div class="rule" id="ruleExtra"><span class="dot">○</span><span>보조식 1개 선택</span></div>
+        <div class="rule" id="ruleBudget"><span class="dot">○</span><span>예산 4,000원 이하</span></div>
+      </div>
+
+      <div class="message" id="message">메뉴를 골라 나만의 급식을 완성해 보세요.</div>
+      <div class="tip">※ 영양 표시는 학습을 위한 간단한 영양 포인트입니다. 실제 영양량은 조리법과 양에 따라 달라집니다.</div>
+
+      <div class="actions">
+        <button class="btn secondary" id="resetBtn">다시 고르기</button>
+        <button class="btn primary" id="completeBtn" disabled>급식 완성하기</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="result" id="result">
+    <div class="result-emoji">🎉🍱🎉</div>
+    <h2>오늘의 급식이 완성되었습니다!</h2>
+    <p>내가 고른 메뉴가 실제 식판에 담겼어요.</p>
+
+    <div class="result-layout">
+      <div class="result-card">
+        <h3>완성된 급식판</h3>
+        <div class="result-tray-wrap">
+          <div class="tray">
+            <div class="tray-slot">
+              <div class="slot-label">반찬 1</div>
+              <div class="slot-emoji" id="resultSide0Emoji">🥢</div>
+              <div class="slot-name" id="resultSide0Name">-</div>
+              <div class="slot-price" id="resultSide0Price"></div>
+            </div>
+            <div class="tray-slot">
+              <div class="slot-label">반찬 2</div>
+              <div class="slot-emoji" id="resultSide1Emoji">🥢</div>
+              <div class="slot-name" id="resultSide1Name">-</div>
+              <div class="slot-price" id="resultSide1Price"></div>
+            </div>
+            <div class="tray-slot">
+              <div class="slot-label">반찬 3</div>
+              <div class="slot-emoji" id="resultSide2Emoji">🥢</div>
+              <div class="slot-name" id="resultSide2Name">-</div>
+              <div class="slot-price" id="resultSide2Price"></div>
+            </div>
+            <div class="tray-slot">
+              <div class="slot-label">보조식</div>
+              <div class="slot-emoji" id="resultExtraEmoji">🍎</div>
+              <div class="slot-name" id="resultExtraName">-</div>
+              <div class="slot-price" id="resultExtraPrice"></div>
+            </div>
+
+            <div class="tray-slot rice">
+              <div class="slot-label">밥</div>
+              <div class="slot-emoji" id="resultRiceEmoji">🍚</div>
+              <div class="slot-name" id="resultRiceName">-</div>
+              <div class="slot-price" id="resultRicePrice"></div>
+            </div>
+            <div class="tray-slot soup">
+              <div class="slot-label">국</div>
+              <div class="slot-emoji" id="resultSoupEmoji">🥣</div>
+              <div class="slot-name" id="resultSoupName">-</div>
+              <div class="slot-price" id="resultSoupPrice"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h3>선택 요약</h3>
+        <div class="result-list" id="resultList"></div>
+        <p id="resultNutrition" style="margin-top:14px;line-height:1.6;"></p>
+        <div class="result-total" id="resultTotal"></div>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn secondary" id="resultResetBtn">다시 만들기</button>
+      <button class="btn secondary" id="saveImageBtn">사진으로 저장하기</button>
+      <button class="btn primary" id="resultTopBtn">위로 가기</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const budget = 4000;
+
+const menus = [
+  {id:'r1',cat:'밥',name:'흰밥',price:650,emoji:'🍚',desc:'가장 기본이 되는 밥',nut:['탄수화물']},
+  {id:'r2',cat:'밥',name:'현미밥',price:720,emoji:'🌾',desc:'현미를 섞은 고소한 밥',nut:['탄수화물','식이섬유']},
+  {id:'r3',cat:'밥',name:'잡곡밥',price:780,emoji:'🌾',desc:'여러 곡물을 섞은 밥',nut:['탄수화물','식이섬유']},
+  {id:'r4',cat:'밥',name:'콩밥',price:820,emoji:'🫘',desc:'콩을 넣어 만든 밥',nut:['탄수화물','단백질']},
+  {id:'r5',cat:'밥',name:'보리밥',price:740,emoji:'🌾',desc:'쫄깃한 보리가 들어간 밥',nut:['탄수화물','식이섬유']},
+  {id:'r6',cat:'밥',name:'김가루밥',price:850,emoji:'🍙',desc:'김가루를 넣어 비빈 밥',nut:['탄수화물','무기질']},
+  {id:'r7',cat:'밥',name:'볶음밥',price:1050,emoji:'🍳',desc:'채소와 함께 볶은 밥',nut:['탄수화물','지방']},
+  {id:'r8',cat:'밥',name:'카레밥',price:1100,emoji:'🍛',desc:'카레를 곁들인 밥',nut:['탄수화물','비타민']},
+  {id:'r9',cat:'밥',name:'주먹밥',price:920,emoji:'🍙',desc:'한입 크기로 만든 밥',nut:['탄수화물']},
+  {id:'r10',cat:'밥',name:'비빔밥',price:1150,emoji:'🥗',desc:'채소와 함께 비벼 먹는 밥',nut:['탄수화물','비타민','식이섬유']},
+
+  {id:'s1',cat:'국',name:'미역국',price:620,emoji:'🥣',desc:'부드럽고 담백한 국',nut:['무기질']},
+  {id:'s2',cat:'국',name:'된장국',price:580,emoji:'🥬',desc:'구수한 된장국',nut:['단백질','무기질']},
+  {id:'s3',cat:'국',name:'콩나물국',price:550,emoji:'🌱',desc:'시원한 콩나물국',nut:['비타민']},
+  {id:'s4',cat:'국',name:'어묵국',price:720,emoji:'🍢',desc:'따뜻한 어묵국',nut:['단백질']},
+  {id:'s5',cat:'국',name:'북엇국',price:750,emoji:'🐟',desc:'담백한 북엇국',nut:['단백질']},
+  {id:'s6',cat:'국',name:'김치국',price:680,emoji:'🌶️',desc:'얼큰한 김치국',nut:['비타민']},
+  {id:'s7',cat:'국',name:'소고기무국',price:920,emoji:'🍲',desc:'소고기와 무가 들어간 국',nut:['단백질','철분']},
+  {id:'s8',cat:'국',name:'갈비탕',price:1150,emoji:'🍲',desc:'고기가 들어간 든든한 국',nut:['단백질','철분']},
+  {id:'s9',cat:'국',name:'계란국',price:650,emoji:'🥚',desc:'부드러운 달걀국',nut:['단백질']},
+  {id:'s10',cat:'국',name:'감자국',price:600,emoji:'🥔',desc:'포근한 감자가 들어간 국',nut:['탄수화물','비타민']},
+
+  {id:'c1',cat:'반찬',name:'계란말이',price:720,emoji:'🥚',desc:'부드러운 달걀 반찬',nut:['단백질']},
+  {id:'c2',cat:'반찬',name:'불고기',price:1150,emoji:'🥩',desc:'달콤한 고기 반찬',nut:['단백질','철분']},
+  {id:'c3',cat:'반찬',name:'김치',price:320,emoji:'🌶️',desc:'아삭한 발효 채소',nut:['비타민','식이섬유']},
+  {id:'c4',cat:'반찬',name:'멸치볶음',price:520,emoji:'🐟',desc:'고소한 멸치 반찬',nut:['칼슘','단백질']},
+  {id:'c5',cat:'반찬',name:'두부조림',price:610,emoji:'🟨',desc:'담백한 두부 반찬',nut:['단백질','칼슘']},
+  {id:'c6',cat:'반찬',name:'시금치나물',price:420,emoji:'🥬',desc:'부드러운 채소 반찬',nut:['철분','비타민']},
+  {id:'c7',cat:'반찬',name:'돈가스',price:1200,emoji:'🍖',desc:'바삭한 인기 반찬',nut:['단백질','지방']},
+  {id:'c8',cat:'반찬',name:'감자조림',price:470,emoji:'🥔',desc:'달콤짭짤한 감자 반찬',nut:['탄수화물']},
+  {id:'c9',cat:'반찬',name:'제육볶음',price:1080,emoji:'🥩',desc:'매콤한 돼지고기 볶음',nut:['단백질','철분']},
+  {id:'c10',cat:'반찬',name:'닭갈비',price:1020,emoji:'🍗',desc:'닭고기와 채소 볶음',nut:['단백질']},
+  {id:'c11',cat:'반찬',name:'생선구이',price:980,emoji:'🐟',desc:'노릇하게 구운 생선',nut:['단백질','오메가3']},
+  {id:'c12',cat:'반찬',name:'오징어볶음',price:930,emoji:'🦑',desc:'쫄깃한 오징어 볶음',nut:['단백질']},
+  {id:'c13',cat:'반찬',name:'소시지볶음',price:760,emoji:'🌭',desc:'달콤짭짤한 소시지 반찬',nut:['단백질','지방']},
+  {id:'c14',cat:'반찬',name:'떡갈비',price:1120,emoji:'🥩',desc:'부드러운 고기 반찬',nut:['단백질','철분']},
+  {id:'c15',cat:'반찬',name:'잡채',price:740,emoji:'🍜',desc:'채소와 당면을 볶은 반찬',nut:['탄수화물','비타민']},
+  {id:'c16',cat:'반찬',name:'콩나물무침',price:360,emoji:'🌱',desc:'아삭한 나물 반찬',nut:['비타민','식이섬유']},
+  {id:'c17',cat:'반찬',name:'애호박볶음',price:390,emoji:'🥒',desc:'부드러운 채소 볶음',nut:['비타민','식이섬유']},
+  {id:'c18',cat:'반찬',name:'브로콜리무침',price:460,emoji:'🥦',desc:'초록 채소 반찬',nut:['비타민','식이섬유']},
+  {id:'c19',cat:'반찬',name:'메추리알조림',price:620,emoji:'🥚',desc:'달콤짭짤한 조림 반찬',nut:['단백질']},
+  {id:'c20',cat:'반찬',name:'김구이',price:300,emoji:'🟩',desc:'바삭한 김 반찬',nut:['무기질']},
+  {id:'c21',cat:'반찬',name:'닭강정',price:1180,emoji:'🍗',desc:'달콤한 닭고기 반찬',nut:['단백질','지방']},
+  {id:'c22',cat:'반찬',name:'고등어조림',price:1040,emoji:'🐟',desc:'양념에 조린 생선',nut:['단백질','오메가3']},
+  {id:'c23',cat:'반찬',name:'새우튀김',price:1080,emoji:'🍤',desc:'바삭한 새우튀김',nut:['단백질','지방']},
+  {id:'c24',cat:'반찬',name:'깻잎무침',price:380,emoji:'🌿',desc:'향긋한 채소 반찬',nut:['비타민','식이섬유']},
+  {id:'c25',cat:'반찬',name:'무생채',price:350,emoji:'🥗',desc:'아삭하고 새콤한 무 반찬',nut:['비타민','식이섬유']},
+  {id:'c26',cat:'반찬',name:'오이무침',price:370,emoji:'🥒',desc:'상큼한 오이 반찬',nut:['비타민','수분']},
+  {id:'c27',cat:'반찬',name:'연근조림',price:490,emoji:'🪷',desc:'아삭한 뿌리채소 조림',nut:['식이섬유']},
+  {id:'c28',cat:'반찬',name:'우엉조림',price:450,emoji:'🌱',desc:'달콤짭짤한 뿌리채소',nut:['식이섬유']},
+  {id:'c29',cat:'반찬',name:'진미채볶음',price:590,emoji:'🦑',desc:'쫄깃한 오징어채 반찬',nut:['단백질']},
+  {id:'c30',cat:'반찬',name:'두부강정',price:680,emoji:'🟨',desc:'달콤한 두부 강정',nut:['단백질','칼슘']},
+
+  {id:'e1',cat:'보조식',name:'요구르트',price:480,emoji:'🥛',desc:'상큼한 유제품',nut:['칼슘']},
+  {id:'e2',cat:'보조식',name:'우유',price:520,emoji:'🥛',desc:'고소한 우유',nut:['칼슘','단백질']},
+  {id:'e3',cat:'보조식',name:'사과',price:560,emoji:'🍎',desc:'아삭한 과일',nut:['비타민','식이섬유']},
+  {id:'e4',cat:'보조식',name:'바나나',price:520,emoji:'🍌',desc:'달콤한 과일',nut:['탄수화물','칼륨']},
+  {id:'e5',cat:'보조식',name:'귤',price:470,emoji:'🍊',desc:'상큼한 과일',nut:['비타민C']},
+  {id:'e6',cat:'보조식',name:'포도',price:650,emoji:'🍇',desc:'달콤한 과일',nut:['비타민']},
+  {id:'e7',cat:'보조식',name:'수박',price:580,emoji:'🍉',desc:'시원한 과일',nut:['수분','비타민']},
+  {id:'e8',cat:'보조식',name:'딸기',price:720,emoji:'🍓',desc:'상큼달콤한 과일',nut:['비타민C']},
+  {id:'e9',cat:'보조식',name:'쿠키',price:620,emoji:'🍪',desc:'달콤한 간식',nut:['탄수화물','지방']},
+  {id:'e10',cat:'보조식',name:'치즈',price:610,emoji:'🧀',desc:'고소한 유제품',nut:['칼슘','단백질']}
+];
+
+let category='밥';
+let selected={밥:null,국:null,반찬:[],보조식:null};
+
+const fmt=n=>n.toLocaleString('ko-KR')+'원';
+const totalPrice=()=>[selected.밥,selected.국,...selected.반찬,selected.보조식].filter(Boolean).reduce((s,i)=>s+i.price,0);
+const selectedIds=()=>[selected.밥?.id,selected.국?.id,...selected.반찬.map(x=>x.id),selected.보조식?.id].filter(Boolean);
+
+function renderMenu(){
+  const grid=document.getElementById('menuGrid');
+  grid.innerHTML='';
+  const ids=selectedIds();
+
+  menus.filter(m=>m.cat===category).forEach(m=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    const isSelected=ids.includes(m.id);
+    btn.className='menu-card'+(isSelected?' selected':'');
+    btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    const tags=m.nut.map((n,i)=>`<span class="nutrient ${i%2?'green':''}">${n}</span>`).join('');
+    btn.innerHTML=`
+      <div class="emoji">${m.emoji}</div>
+      <div class="menu-name">${m.name}</div>
+      <div class="menu-price">${fmt(m.price)}</div>
+      <div class="menu-desc">${m.desc}</div>
+      <div class="nutrients">${tags}</div>
+    `;
+    btn.addEventListener('click',()=>chooseMenu(m));
+    grid.appendChild(btn);
+  });
+}
+
+function chooseMenu(m){
+  if(m.cat==='반찬'){
+    const idx=selected.반찬.findIndex(x=>x.id===m.id);
+    if(idx>=0){
+      selected.반찬.splice(idx,1);
+    }else if(selected.반찬.length<3){
+      selected.반찬.push(m);
+    }else{
+      setMessage('반찬은 3개까지만 고를 수 있어요. 하나를 빼고 다시 선택해 보세요.',true);
+      return;
+    }
+  }else{
+    selected[m.cat]=selected[m.cat]?.id===m.id?null:m;
+  }
+  updateAll();
+}
+
+function setMessage(text,warn=false){
+  const el=document.getElementById('message');
+  el.textContent=text;
+  el.classList.toggle('warn',warn);
+}
+
+function setRule(id,ok){
+  const el=document.getElementById(id);
+  el.classList.toggle('ok',ok);
+  el.querySelector('.dot').textContent=ok?'✓':'○';
+}
+
+function fillSlot(prefix, item, fallbackEmoji){
+  const emojiEl=document.getElementById(prefix+'Emoji');
+  const nameEl=document.getElementById(prefix+'Name');
+  const priceEl=document.getElementById(prefix+'Price');
+
+  if(!emojiEl || !nameEl || !priceEl) return;
+
+  if(item){
+    emojiEl.textContent=item.emoji;
+    nameEl.textContent=item.name;
+    priceEl.textContent=fmt(item.price);
+  }else{
+    emojiEl.textContent=fallbackEmoji;
+    nameEl.textContent='미선택';
+    priceEl.textContent='';
+  }
+}
+
+function updateMainTray(){
+  fillSlot('side0', selected.반찬[0], '🥢');
+  fillSlot('side1', selected.반찬[1], '🥢');
+  fillSlot('side2', selected.반찬[2], '🥢');
+  fillSlot('extra', selected.보조식, '🍎');
+  fillSlot('rice', selected.밥, '🍚');
+  fillSlot('soup', selected.국, '🥣');
+}
+
+function updateAll(){
+  const total=totalPrice();
+  const remain=budget-total;
+
+  document.getElementById('usedPrice').textContent=fmt(total);
+  document.getElementById('remainPrice').textContent=fmt(remain);
+  document.getElementById('remainTop').textContent=fmt(remain);
+  document.getElementById('usedTop').textContent='사용 '+fmt(total);
+
+  const bar=document.getElementById('progressBar');
+  bar.style.width=Math.min(100,Math.max(0,total/budget*100))+'%';
+  bar.style.background=total>budget?'#d96b5f':'#f4d97a';
+
+  updateMainTray();
+
+  const checks=[
+    !!selected.밥,
+    !!selected.국,
+    selected.반찬.length===3,
+    !!selected.보조식,
+    total<=budget
+  ];
+
+  ['ruleRice','ruleSoup','ruleSide','ruleExtra','ruleBudget'].forEach((id,i)=>setRule(id,checks[i]));
+  const complete=checks.every(Boolean);
+  document.getElementById('completeBtn').disabled=!complete;
+
+  if(total>budget){
+    setMessage(`⚠️ 예산을 ${fmt(total-budget)} 초과했습니다. 비싼 메뉴 하나를 조금 더 저렴한 메뉴로 바꾸어 보세요.`,true);
+  }else if(complete){
+    setMessage(`성공! 모든 조건을 만족했습니다. ${fmt(remain)}을 남기고 급식을 완성할 수 있어요.`);
+  }else{
+    setMessage(`현재 ${fmt(total)}을 사용했습니다. 남은 ${fmt(remain)} 안에서 나머지 메뉴를 골라 보세요.`);
+  }
+
+  document.getElementById('result').classList.remove('show');
+  renderMenu();
+}
+
+function buildResult(){
+  const list=[selected.밥, selected.국, ...selected.반찬, selected.보조식].filter(Boolean);
+  const total=totalPrice();
+  const remain=budget-total;
+  const nutrients=[...new Set(list.flatMap(x=>x.nut))];
+
+  fillSlot('resultSide0', selected.반찬[0], '🥢');
+  fillSlot('resultSide1', selected.반찬[1], '🥢');
+  fillSlot('resultSide2', selected.반찬[2], '🥢');
+  fillSlot('resultExtra', selected.보조식, '🍎');
+  fillSlot('resultRice', selected.밥, '🍚');
+  fillSlot('resultSoup', selected.국, '🥣');
+
+  const rows=[
+    ['밥', selected.밥],
+    ['국', selected.국],
+    ['반찬 1', selected.반찬[0]],
+    ['반찬 2', selected.반찬[1]],
+    ['반찬 3', selected.반찬[2]],
+    ['보조식', selected.보조식]
+  ];
+
+  document.getElementById('resultList').innerHTML = rows.map(([label,item])=>`
+    <div class="result-item">
+      <span>${label}</span>
+      <span><b>${item ? item.emoji+' '+item.name : '-'}</b> ${item ? '('+fmt(item.price)+')' : ''}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('resultNutrition').textContent='영양 포인트: '+nutrients.join(' · ');
+  document.getElementById('resultTotal').textContent=`총 ${fmt(total)} · 남은 예산 ${fmt(remain)}`;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    category=btn.dataset.cat;
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
+    renderMenu();
+  });
+});
+
+function resetAll(){
+  selected={밥:null,국:null,반찬:[],보조식:null};
+  category='밥';
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.cat==='밥'));
+  updateAll();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('resetBtn').addEventListener('click',resetAll);
+document.getElementById('resultResetBtn').addEventListener('click',resetAll);
+document.getElementById('resultTopBtn').addEventListener('click',()=>window.scrollTo({top:0, behavior:'smooth'}));
+document.getElementById('completeBtn').addEventListener('click',buildResult);
+
+renderMenu();
+updateAll();
+
+function roundRectPath(ctx, x, y, w, h, r){
+  const rr = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r, fill, stroke){
+  roundRectPath(ctx, x, y, w, h, r);
+  if(fill){
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  if(stroke){
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+function drawCenteredText(ctx, text, x, y, maxWidth, font, color){
+  ctx.save();
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  let output = text || '';
+  while(ctx.measureText(output).width > maxWidth && output.length > 0){
+    output = output.slice(0, -1);
+  }
+  if(output !== text && output.length > 1) output = output.slice(0, -1) + '…';
+  ctx.fillText(output, x, y);
+  ctx.restore();
+}
+
+function drawSlotToCanvas(ctx, x, y, w, h, label, item, fallbackEmoji){
+  drawRoundedRect(ctx, x, y, w, h, 22, '#f7f8f6', '#c9cecb');
+  ctx.fillStyle = '#7f8780';
+  ctx.font = '16px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(label, x + w/2, y + 14);
+
+  ctx.font = '42px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#2f352f';
+  ctx.fillText(item ? item.emoji : fallbackEmoji, x + w/2, y + h/2 - 8);
+
+  drawCenteredText(
+    ctx,
+    item ? item.name : '미선택',
+    x + w/2,
+    y + h - 46,
+    w - 24,
+    'bold 22px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif',
+    '#2f352f'
+  );
+
+  if(item){
+    drawCenteredText(
+      ctx,
+      fmt(item.price),
+      x + w/2,
+      y + h - 18,
+      w - 24,
+      'bold 18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif',
+      '#6f756f'
+    );
+  }
+}
+
+function saveResultAsImage(){
+  const total = totalPrice();
+  const remain = budget - total;
+  const list = [selected.밥, selected.국, ...selected.반찬, selected.보조식].filter(Boolean);
+  const nutrients = [...new Set(list.flatMap(x => x.nut || []))];
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1400;
+  canvas.height = 1100;
+  const ctx = canvas.getContext('2d');
+
+  // ---------- Background ----------
+  ctx.fillStyle = '#f5f2e8';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // soft decorative circles
+  ctx.fillStyle = '#efe5b9';
+  ctx.beginPath(); ctx.arc(120, 120, 90, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#dfeade';
+  ctx.beginPath(); ctx.arc(1290, 140, 120, 0, Math.PI*2); ctx.fill();
+
+  // Main card
+  drawRoundedRect(ctx, 50, 45, 1300, 1010, 38, '#fffdf8', '#e4dccb');
+
+  // ---------- Header ----------
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+
+  ctx.fillStyle = '#3f6b4f';
+  ctx.font = 'bold 24px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('TODAY’S SCHOOL LUNCH', 100, 95);
+
+  ctx.fillStyle = '#28342c';
+  ctx.font = 'bold 60px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('🍱 내가 만든 오늘의 급식', 100, 135);
+
+  ctx.fillStyle = '#7b817a';
+  ctx.font = '22px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('예산 안에서 직접 고른 나만의 급식 메뉴', 100, 210);
+
+  // success badge
+  drawRoundedRect(ctx, 1030, 105, 250, 72, 22, '#e8f3e8', '#cfe0ce');
+  ctx.fillStyle = '#3f6b4f';
+  ctx.font = 'bold 24px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✓ 예산 지키기 성공', 1155, 141);
+
+  // budget mini cards
+  drawRoundedRect(ctx, 100, 270, 360, 105, 24, '#f7f2df', '#e6ddbb');
+  ctx.fillStyle = '#7b6d39';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.font = '18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('총 사용 금액', 130, 292);
+  ctx.fillStyle = '#2f352f';
+  ctx.font = 'bold 38px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText(fmt(total), 130, 320);
+
+  drawRoundedRect(ctx, 480, 270, 360, 105, 24, '#edf5ee', '#d4e2d6');
+  ctx.fillStyle = '#54705a';
+  ctx.font = '18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('남은 예산', 510, 292);
+  ctx.fillStyle = '#2f352f';
+  ctx.font = 'bold 38px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText(fmt(remain), 510, 320);
+
+  drawRoundedRect(ctx, 860, 270, 420, 105, 24, '#f3f5f7', '#dfe3e6');
+  ctx.fillStyle = '#64717a';
+  ctx.font = '18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('예산 활용률', 890, 292);
+  ctx.fillStyle = '#2f352f';
+  ctx.font = 'bold 38px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText(Math.round((total / budget) * 100) + '%', 890, 320);
+
+  // ---------- Tray Area ----------
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = '#2f352f';
+  ctx.font = 'bold 28px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.fillText('완성된 급식판', 100, 415);
+
+  drawRoundedRect(ctx, 100, 465, 820, 455, 32, '#d6dad7', '#c2c8c4');
+
+  const gap = 14;
+  const topW = 180;
+  const topH = 145;
+  const trayX = 130;
+  const trayY = 495;
+
+  drawSlotToCanvas(ctx, trayX, trayY, topW, topH, '반찬 1', selected.반찬[0], '🥢');
+  drawSlotToCanvas(ctx, trayX + (topW+gap), trayY, topW, topH, '반찬 2', selected.반찬[1], '🥢');
+  drawSlotToCanvas(ctx, trayX + (topW+gap)*2, trayY, topW, topH, '반찬 3', selected.반찬[2], '🥢');
+  drawSlotToCanvas(ctx, trayX + (topW+gap)*3, trayY, topW, topH, '보조식', selected.보조식, '🍎');
+
+  drawSlotToCanvas(ctx, trayX, 655, 373, 220, '밥', selected.밥, '🍚');
+  drawSlotToCanvas(ctx, trayX + 387, 655, 373, 220, '국', selected.국, '🥣');
+
+  // ---------- Menu Summary ----------
+  drawRoundedRect(ctx, 950, 415, 330, 505, 26, '#faf7ef', '#e7dfcf');
+  ctx.fillStyle = '#2f352f';
+  ctx.font = 'bold 28px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('오늘의 메뉴', 1115, 445);
+
+  const rows = [
+    ['밥', selected.밥],
+    ['국', selected.국],
+    ['반찬 1', selected.반찬[0]],
+    ['반찬 2', selected.반찬[1]],
+    ['반찬 3', selected.반찬[2]],
+    ['보조식', selected.보조식]
+  ];
+
+  let ry = 500;
+  rows.forEach(([label, item])=>{
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillStyle = '#879087';
+    ctx.font = '16px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+    ctx.fillText(label, 985, ry);
+
+    ctx.fillStyle = '#2f352f';
+    ctx.font = 'bold 20px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+    const itemText = item ? `${item.emoji} ${item.name}` : '-';
+    ctx.fillText(itemText, 1055, ry);
+
+    ry += 60;
+  });
+
+  // ---------- Nutrition Strip ----------
+  drawRoundedRect(ctx, 100, 945, 1180, 70, 22, '#eef4ef', '#d5e2d7');
+  ctx.fillStyle = '#496a4d';
+  ctx.font = 'bold 18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('영양 포인트', 130, 980);
+
+  ctx.fillStyle = '#2f352f';
+  ctx.font = '18px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  const nutText = nutrients.length ? nutrients.join(' · ') : '없음';
+  ctx.fillText(nutText, 255, 980);
+
+  // Footer
+  ctx.fillStyle = '#9a9f99';
+  ctx.font = '15px Pretendard, Noto Sans KR, Apple SD Gothic Neo, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('급식 메뉴 정하기 활동 결과', 700, 1035);
+
+  // ---------- Save ----------
+  const link = document.createElement('a');
+  const now = new Date();
+  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  link.download = `오늘의_나만의_급식표_${stamp}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+document.getElementById('saveImageBtn').addEventListener('click', saveResultAsImage);
+</script>
+</body>
+</html>
