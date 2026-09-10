@@ -49,10 +49,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:
 .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}
 .preset{border:1px solid #d9d2c7;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;cursor:pointer}
 .preset:hover{transform:translateY(-1px)}
-.team-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
-.team-card{background:#f7f3ea;border:1px solid #e3dccf;border-radius:13px;padding:10px 12px}
-.team-card b{display:flex;justify-content:space-between;gap:8px;color:#263b55}
-.team-card span{font-size:11px;color:#73808d}
+.team-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 12px}
+.team-card{appearance:none;width:100%;text-align:left;background:#f7f3ea;border:2px solid #e3dccf;border-radius:16px;padding:14px 15px;cursor:pointer;transition:.16s;color:#263b55}
+.team-card:hover{transform:translateY(-2px);border-color:#b8c7d6}
+.team-card.selected{background:#eaf1f7;border-color:#577895;box-shadow:0 0 0 3px #57789518}
+.team-card .team-name{display:block;font-size:16px;font-weight:1000;color:#263b55}
+.team-card .team-score{display:block;font-size:34px;line-height:1.05;font-weight:1000;color:#274d70;margin:8px 0 5px}
+.team-card .team-count{display:block;font-size:11px;color:#73808d}
+.team-detail-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 4px 7px;font-size:12px;font-weight:900;color:#556675}
 .teacher-answer{margin-top:8px;background:#fff6d8;border:1px solid #e9cf82;border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.55}
 .teacher-answer b{display:block;color:#735819;font-size:13px}
 .qrbox{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #e4ded4;border-radius:14px;padding:10px;margin-top:10px}
@@ -196,7 +200,7 @@ let app,auth,db,uid,roomCode="",role="",teacher=false,myName="",roomData={},play
 let roomOff,playersOff,chatOff,strokeOff,subOff,timer,nextTimer,endGuard=false,resultShown=false;
 let strokes=[],drawing=false,last=null,lastPush=0,color="#20242b",size=5,toolMode="pen",currentPathId="";
 let audioCtx=null,lastCountdownKey="",lastRoundSound=0,lastRoundState="",lastGuessAt=0,lastGuessNorm="",lastGuessNormAt=0;
-let celebrateTimer=null,serverGuessState=new Map();
+let celebrateTimer=null,serverGuessState=new Map(),selectedTeam=null;
 
 const SESSION_KEY="sketchDetectiveSessionV2";
 
@@ -370,7 +374,7 @@ function listen(){
       if(lastRoundSound!==r.number){lastRoundSound=r.number;sound("next")}
       resultShown=false;
     }
-    if(r.state==="ended"&&prevState==="active")sound("time");
+    if(r.state==="ended"&&prevState==="active"&&!r.solvedByUid)sound("time");
     if(roomData.status==="ended"&&!resultShown){resultShown=true;sound("finish");setTimeout(showRanks,350)}
   });
   playersOff=onValue(ref(db,"players/"+roomCode),s=>{
@@ -430,8 +434,18 @@ function renderTeams(){
   const teamMode=roomData.settings?.gameMode==="team";
   $("teamBoard").classList.toggle("hidden",!teamMode);
   $("teamManageRow").classList.toggle("hidden",!(teamMode&&teacher));
-  if(!teamMode){$("teamBoard").innerHTML="";return}
-  $("teamBoard").innerHTML=teamTotals().map((t,i)=>`<div class="team-card"><b><span>${i<3?["🥇","🥈","🥉"][i]:"👥"} ${t.team}팀</span><span>${t.score}점</span></b><span>${t.count}명</span></div>`).join("");
+  if(!teamMode){$("teamBoard").innerHTML="";selectedTeam=null;return}
+  const totals=teamTotals();
+  if(selectedTeam&&!totals.some(t=>t.team===selectedTeam))selectedTeam=null;
+  $("teamBoard").innerHTML=totals.map((t,i)=>`<button type="button" class="team-card ${selectedTeam===t.team?"selected":""}" data-team-card="${t.team}">
+    <span class="team-name">${i<3?["🥇","🥈","🥉"][i]:"👥"} ${t.team}팀</span>
+    <span class="team-score">${t.score}점</span>
+    <span class="team-count">${t.count}명 · 눌러서 개인 점수 보기</span>
+  </button>`).join("");
+  document.querySelectorAll("[data-team-card]").forEach(b=>b.onclick=()=>{
+    selectedTeam=selectedTeam===+b.dataset.teamCard?null:+b.dataset.teamCard;
+    renderTeams();renderPlayers();
+  });
 }
 
 function render(){
@@ -449,13 +463,15 @@ function render(){
   if(active)ov.classList.add("hidden");
   else{
     ov.classList.remove("hidden");
-    ov.innerHTML=ended?`<div><b>🔎 사건 해결!</b><span>정답은 <strong>${esc(r.answerReveal||"-")}</strong>였습니다.<br>잠시 후 다음 사건으로 넘어갑니다.</span></div>`:`<div><b>🕵️ 사건 대기 중</b><span>학생들이 모두 입장하면 교사가 게임을 시작합니다.</span></div>`;
+    ov.innerHTML=ended?`<div><b>🔎 사건 해결!</b><span>정답은 <strong>${esc(r.answerReveal||"-")}</strong>였습니다.${r.solvedByName?`<br>🎉 ${esc(r.solvedByName)} 학생이 가장 먼저 맞혔습니다.`:""}<br>잠시 후 다음 사건으로 넘어갑니다.</span></div>`:`<div><b>🕵️ 사건 대기 중</b><span>학생들이 모두 입장하면 교사가 게임을 시작합니다.</span></div>`;
   }
   let locked=!!roomData.chatLocked,me=playerData[uid]||{},muted=!!me.muted;
   let can=!teacher&&active&&!drawer&&!mine&&!locked&&!muted;
-  $("guess").disabled=!can;$("chatPill").textContent=muted?"개별 금지":locked?"잠금":can?"입력 가능":"대기";
-  $("guess").placeholder=muted?"교사가 내 채팅을 잠갔습니다.":locked?"교사가 채팅을 잠갔습니다.":drawer?"출제자는 정답 입력 불가":mine?"이번 문제를 맞혔습니다! ✅":active?"정답을 입력하세요":"게임이 시작되면 입력 가능";
-  $("chatLockBtn").textContent=locked?"채팅 열기":"채팅 잠금";$("roomLockBtn").textContent=roomData.roomLocked?"입장 열기":"입장 잠금";
+  $("guess").disabled=!can;
+  $("chatPill").textContent=ended?"정답 공개 · 잠금":muted?"개별 금지":locked?"잠금":can?"입력 가능":"대기";
+  $("guess").placeholder=ended?"정답이 공개되어 입력이 잠겼습니다.":muted?"교사가 내 채팅을 잠갔습니다.":locked?"교사가 채팅을 잠갔습니다.":drawer?"출제자는 정답 입력 불가":mine?"이번 문제를 맞혔습니다! ✅":active?"정답을 입력하세요":"게임이 시작되면 입력 가능";
+  $("chatLockBtn").textContent=locked?"채팅 열기":"채팅 잠금";
+  $("roomLockBtn").textContent=roomData.roomLocked?"🔒 입장 잠금 · 열기":"🔓 입장 열림 · 잠그기";
   $("passToggleBtn").textContent=setg.passAllowed?"패스 허용 중":"패스 금지 중";
   $("correctCount").textContent=`정답 ${Object.values(correct).filter(Boolean).length}명`;
   const teacherPreview=teacher&&active;
@@ -469,16 +485,25 @@ function render(){
 }
 
 function renderPlayers(){
+  const teamMode=roomData.settings?.gameMode==="team";
   let a=allVisiblePlayers().map(([id,v])=>({id,...v})).sort((a,b)=>(b.score||0)-(a.score||0));
   let d=roomData.round?.drawerUid,c=roomData.round?.correct||{};
   $("countPill").textContent=activePlayersEntries().length+"명";
-  $("players").innerHTML=a.length?a.map((p,i)=>`
+
+  if(teamMode&&!selectedTeam){
+    $("players").innerHTML=`<div class="help" style="padding:12px;text-align:center">👆 위의 팀 점수 카드를 누르면<br>해당 팀 학생별 점수가 표시됩니다.</div>`;
+    return;
+  }
+  if(teamMode) a=a.filter(p=>p.team===selectedTeam);
+
+  const head=teamMode?`<div class="team-detail-head"><span>👥 ${selectedTeam}팀 학생별 점수</span><span>${a.length}명</span></div>`:"";
+  $("players").innerHTML=head+(a.length?a.map((p,i)=>`
     <div class="player ${p.id===d?"drawer":""} ${c[p.id]?"correct":""} ${p.online===false?"offline":""} ${p.muted?"muted":""}">
       <div>
-        <div class="pname">${i<3?["🥇","🥈","🥉"][i]:"👤"} ${esc(p.name)} ${roomData.settings?.gameMode==="team"&&p.team?`<span class="teamtag">${p.team}팀</span>`:""} ${p.id===d?"✏️":""} ${c[p.id]?"✅":""} ${p.muted?"🔇":""}</div>
+        <div class="pname">${i<3?["🥇","🥈","🥉"][i]:"👤"} ${esc(p.name)} ${teamMode&&p.team?`<span class="teamtag">${p.team}팀</span>`:""} ${p.id===d?"✏️":""} ${c[p.id]?"✅":""} ${p.muted?"🔇":""}</div>
         <div class="pmeta">${p.online===false?"연결 끊김 · ": ""}${p.id===d?"현재 출제자":c[p.id]?"정답 완료":"추리 중"}</div>
         ${teacher?`<div class="player-actions">
-          ${roomData.settings?.gameMode==="team"?`<select class="team-select" data-team-player="${p.id}">
+          ${teamMode?`<select class="team-select" data-team-player="${p.id}">
             ${Array.from({length:+(roomData.settings?.teamCount||2)},(_,ti)=>`<option value="${ti+1}" ${p.team===ti+1?"selected":""}>${ti+1}팀</option>`).join("")}
           </select>`:""}
           <button class="mini mute" data-mute="${p.id}">${p.muted?"채팅 허용":"채팅 금지"}</button>
@@ -486,7 +511,7 @@ function renderPlayers(){
         </div>`:""}
       </div>
       <div class="score">${p.score||0}점</div>
-    </div>`).join(""):`<div class="help">아직 입장한 학생이 없습니다.</div>`;
+    </div>`).join(""):`<div class="help">이 팀에 학생이 없습니다.</div>`);
   if(teacher){
     document.querySelectorAll("[data-mute]").forEach(b=>b.onclick=()=>toggleMute(b.dataset.mute));
     document.querySelectorAll("[data-kick]").forEach(b=>b.onclick=()=>kickPlayer(b.dataset.kick));
@@ -558,7 +583,7 @@ async function processSubmission(s){
   if(!teacher||!s.exists())return;let q=s.val();
   try{
     let rs=await get(ref(db,"rooms/"+roomCode)),r=rs.val();
-    if(!r||r.status!=="playing"||r.round?.state!=="active"||q.roundNumber!==r.round.number)return;
+    if(!r||r.status!=="playing"||r.round?.state!=="active"||r.round?.winnerUid||q.roundNumber!==r.round.number)return;
     if(q.type==="pass"){
       if(q.uid===r.round.drawerUid&&r.settings?.passAllowed)await endRound(`${q.name} 학생이 패스했습니다.`);
       return;
@@ -572,16 +597,39 @@ async function processSubmission(s){
     let sec=(await get(ref(db,`secrets/${roomCode}/current`))).val();if(!sec)return;
     let ok=(sec.aliases||[sec.answer]).map(norm).includes(qn);
     if(ok){
-      let pts=+(r.settings.correctPoints||20),bonus=+(r.settings.drawerBonus||20);
-      await update(ref(db,`rooms/${roomCode}/round/correct`),{[q.uid]:true});
+      // 한 문제에서는 가장 먼저 맞힌 1명만 점수를 받도록 서버에서 원자적으로 선점합니다.
+      const claim=await runTransaction(ref(db,`rooms/${roomCode}/round/winnerUid`),v=>v?undefined:q.uid);
+      if(!claim.committed)return;
+
+      let pts=+(r.settings.correctPoints||20),bonus=+(r.settings.drawerBonus||20),endedAt=Date.now();
+      const roundUpdate={};
+      roundUpdate[`rooms/${roomCode}/round/state`]="ended";
+      roundUpdate[`rooms/${roomCode}/round/answerReveal`]=sec.answer||"";
+      roundUpdate[`rooms/${roomCode}/round/solvedByUid`]=q.uid;
+      roundUpdate[`rooms/${roomCode}/round/solvedByName`]=q.name;
+      roundUpdate[`rooms/${roomCode}/round/endedAt`]=endedAt;
+      roundUpdate[`rooms/${roomCode}/round/correct/${q.uid}`]=true;
+      await update(ref(db),roundUpdate);
+
+      // 최초 정답자 1명 + 해당 문제 출제자 1명에게만 각각 한 번 점수를 줍니다.
       await runTransaction(ref(db,`players/${roomCode}/${q.uid}/score`),v=>(+v||0)+pts);
       await runTransaction(ref(db,`players/${roomCode}/${q.uid}/correctAnswers`),v=>(+v||0)+1);
-      await runTransaction(ref(db,`players/${roomCode}/${r.round.drawerUid}/score`),v=>(+v||0)+bonus);
-      await runTransaction(ref(db,`players/${roomCode}/${r.round.drawerUid}/drawerCorrects`),v=>(+v||0)+1);
-      await push(ref(db,`rooms/${roomCode}/chat`),{type:"correct",name:q.name,points:pts,ts:Date.now()});
-      setTimeout(checkAll,200);
+      if(r.round.drawerUid){
+        await runTransaction(ref(db,`players/${roomCode}/${r.round.drawerUid}/score`),v=>(+v||0)+bonus);
+        await runTransaction(ref(db,`players/${roomCode}/${r.round.drawerUid}/drawerCorrects`),v=>(+v||0)+1);
+      }
+
+      await push(ref(db,`rooms/${roomCode}/chat`),{type:"correct",name:q.name,points:pts,ts:endedAt});
+      await push(ref(db,`rooms/${roomCode}/chat`),{type:"system",text:`🔎 정답은 '${sec.answer||"-"}'`,ts:endedAt+1});
+
+      clearTimeout(nextTimer);
+      const n=r.round.number,m=r.settings.totalRounds||0;
+      nextTimer=setTimeout(()=>{endGuard=false;n>=m?finishGame():startRound(n+1)},4500);
     }else{
-      await push(ref(db,`rooms/${roomCode}/chat`),{type:"guess",name:q.name,text:q.text,ts:Date.now()});
+      // 이미 정답자가 나온 직후 들어온 제출은 채팅에도 남기지 않습니다.
+      const latest=(await get(ref(db,`rooms/${roomCode}/round`))).val();
+      if(latest?.state==="active"&&!latest?.winnerUid)
+        await push(ref(db,`rooms/${roomCode}/chat`),{type:"guess",name:q.name,text:q.text,ts:Date.now()});
     }
   }finally{try{await remove(s.ref)}catch{}}
 }
@@ -600,7 +648,7 @@ $("startBtn").onclick=async()=>{
   let u={};p.forEach(([id])=>{
     u[`players/${roomCode}/${id}/score`]=0;u[`players/${roomCode}/${id}/correctAnswers`]=0;u[`players/${roomCode}/${id}/drawerCorrects`]=0;
   });
-  await update(ref(db),u);await update(ref(db,"rooms/"+roomCode),{status:"playing",roomLocked:true,usedWordIds:{}});
+  await update(ref(db),u);await update(ref(db,"rooms/"+roomCode),{status:"playing",roomLocked:false,usedWordIds:{}});
   await push(ref(db,`rooms/${roomCode}/chat`),{type:"system",text:"🕵️ 게임이 시작되었습니다!",ts:Date.now()});startRound(1);
 };
 
@@ -628,7 +676,7 @@ async function startRound(n){
   strokes=[];clearLocal();await set(ref(db,`secrets/${roomCode}/current`),w);
   await set(ref(db,`rooms/${roomCode}/round`),{
     number:n,state:"active",drawerUid:d[0],drawerName:d[1].name,startedAt:now,endAt:now+setg.roundSeconds*1000,
-    hintStage:0,hintText:"",correct:{}
+    hintStage:0,hintText:"",correct:{},winnerUid:"",solvedByUid:"",solvedByName:"",answerReveal:""
   });
   await push(ref(db,`rooms/${roomCode}/chat`),{type:"system",text:`✏️ ${d[1].name} 학생이 그림을 그립니다.`,ts:Date.now()});
 }
@@ -636,7 +684,7 @@ async function startRound(n){
 async function endRound(reason="시간 종료!"){
   if(!teacher||endGuard)return;endGuard=true;
   let r=(await get(ref(db,"rooms/"+roomCode))).val();
-  if(!r||r.round?.state!=="active"){endGuard=false;return}
+  if(!r||r.round?.state!=="active"||r.round?.winnerUid){endGuard=false;return}
   let s=(await get(ref(db,`secrets/${roomCode}/current`))).val();
   await update(ref(db,`rooms/${roomCode}/round`),{state:"ended",answerReveal:s?.answer||"",endedAt:Date.now()});
   await push(ref(db,`rooms/${roomCode}/chat`),{type:"system",text:`🔎 ${reason} 정답은 '${s?.answer||"-"}'`,ts:Date.now()});
