@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>고유어 탐험 사전</title>
+<style>
+:root{
+  --green:#4b9f78;
+  --green-deep:#2f7757;
+  --cream:#fffaf1;
+  --paper:#ffffff;
+  --ink:#39413f;
+  --muted:#858d89;
+  --line:#ebe9e3;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:system-ui,"Noto Sans KR",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 0%,#fff6dc 0 160px,transparent 161px),
+    linear-gradient(180deg,#fffef9 0,#fbfcfa 100%);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+/* ===== 상단 일러스트 헤더 ===== */
+.hero{
+  background:linear-gradient(180deg,#fff9e8 0%,#fffdf5 100%);
+  border-bottom:1px solid #eee7d8;
+}
+.heroInner{
+  max-width:1240px;
+  margin:auto;
+  padding:18px 20px 14px;
+  display:grid;
+  grid-template-columns:260px 1fr 380px;
+  gap:24px;
+  align-items:center;
+}
+.heroMascot{
+  height:105px;
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+}
+.mascotScene{
+  width:210px;
+  height:105px;
+}
+.brand small{
+  display:block;
+  color:#6f9c75;
+  font-weight:1000;
+  font-size:13px;
+  letter-spacing:.3px;
+}
+.brand h1{
+  margin:4px 0 0;
+  font-size:31px;
+  letter-spacing:-1.1px;
+  color:#33443c;
+}
+.brand p{
+  margin:7px 0 0;
+  color:#7e8883;
+  font-size:13px;
+}
+.searchWrap{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.searchWrap input{
+  min-width:0;
+  flex:1;
+  border:2px solid #cfe3d4;
+  background:#fff;
+  border-radius:15px;
+  padding:13px 15px;
+  font-size:15px;
+  outline:none;
+}
+.searchWrap input:focus{
+  border-color:#65ac83;
+  box-shadow:0 0 0 4px #65ac8317;
+}
+.searchBtn{
+  border:0;
+  border-radius:14px;
+  padding:13px 17px;
+  background:#4c9c73;
+  color:#fff;
+  font-weight:1000;
+  box-shadow:0 5px 12px #4c9c7324;
+}
+
+/* ===== 일러스트 메뉴 ===== */
+.menuSection{
+  background:#fff;
+  border-bottom:1px solid #efede7;
+}
+.menuInner{
+  max-width:1240px;
+  margin:auto;
+  padding:13px 20px 16px;
+}
+.menuTitle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:#818984;
+  font-weight:900;
+  margin-bottom:9px;
+}
+.categoryGrid{
+  display:grid;
+  grid-template-columns:repeat(11,minmax(0,1fr));
+  gap:9px;
+}
+.cat{
+  border:1px solid #eeeae2;
+  border-radius:17px;
+  min-height:98px;
+  padding:7px 5px 8px;
+  background:#fff;
+  color:#59615d;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:11px;
+  font-weight:1000;
+  box-shadow:0 3px 10px #635a4909;
+  transition:.16s;
+}
+.cat:hover{
+  transform:translateY(-2px);
+  box-shadow:0 7px 15px #635a4914;
+}
+.cat.on{
+  border:2px solid #4da176;
+  box-shadow:0 0 0 3px #4da17612;
+  background:#fbfffc;
+}
+.iconShell{
+  width:58px;
+  height:58px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.catLabel{line-height:1.1;text-align:center}
+.cat[data-cat="all"] .iconShell{background:#fff1c9}
+.cat[data-cat="nature"] .iconShell{background:#e5f6ff}
+.cat[data-cat="plant"] .iconShell{background:#e8f7df}
+.cat[data-cat="animal"] .iconShell{background:#fff0e0}
+.cat[data-cat="body"] .iconShell{background:#ffe9ee}
+.cat[data-cat="home"] .iconShell{background:#efeaff}
+.cat[data-cat="food"] .iconShell{background:#fff5d8}
+.cat[data-cat="action"] .iconShell{background:#e5f7f1}
+.cat[data-cat="mind"] .iconShell{background:#ffe9f0}
+.cat[data-cat="sound"] .iconShell{background:#fff0db}
+.cat[data-cat="play"] .iconShell{background:#e9efff}
+
+.page{
+  max-width:1240px;
+  margin:auto;
+  padding:21px 20px 36px;
+}
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:15px;
+  margin-bottom:15px;
+}
+.toolbar h2{
+  margin:0;
+  font-size:23px;
+  letter-spacing:-.6px;
+}
+.toolbar h2 strong{color:#4b9f78}
+.toolbar p{
+  margin:5px 0 0;
+  color:#8b928e;
+  font-size:12px;
+}
+.controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.count{
+  border-radius:999px;
+  background:#eaf6ef;
+  color:#4d8063;
+  font-size:11px;
+  font-weight:1000;
+  padding:7px 10px;
+}
+.controls select{
+  border:1px solid #dddcd6;
+  border-radius:10px;
+  background:#fff;
+  padding:8px 28px 8px 10px;
+  color:#666e69;
+  font-size:12px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:14px;
+}
+.card{
+  background:#fff;
+  border:1px solid #ebe9e4;
+  border-radius:17px;
+  overflow:hidden;
+  box-shadow:0 5px 14px #4c463b0c;
+  transition:.16s;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 9px 20px #4c463b15;
+}
+.thumb{
+  height:135px;
+  background:#eef1ef;
+  position:relative;
+  overflow:hidden;
+}
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.thumbLoading{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:15px;
+  font-size:12px;
+  color:#7b8580;
+  background:linear-gradient(110deg,#edf0ee 8%,#fafbfa 18%,#edf0ee 33%);
+  background-size:200% 100%;
+  animation:shimmer 1.1s linear infinite;
+}
+@keyframes shimmer{to{background-position-x:-200%}}
+.wordTag{
+  position:absolute;
+  left:9px;bottom:8px;
+  background:#fffffff0;
+  border-radius:8px;
+  padding:4px 7px;
+  font-size:11px;
+  font-weight:1000;
+  box-shadow:0 3px 8px #00000010;
+}
+.cardBody{padding:12px}
+.wordRow{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.wordRow h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.4px;
+}
+.badge{
+  font-size:9px;
+  border-radius:999px;
+  padding:4px 6px;
+  font-weight:1000;
+  background:#e8f5ec;
+  color:#418461;
+}
+.badge.alt{
+  background:#eeeaff;
+  color:#7563c8;
+}
+.meta{
+  margin-top:4px;
+  font-size:10px;
+  font-weight:900;
+  color:#9b8b95;
+}
+.meaning{
+  margin-top:7px;
+  min-height:54px;
+  color:#66706a;
+  font-size:12px;
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.detailBtn{
+  width:100%;
+  border:0;
+  border-radius:9px;
+  padding:8px 9px;
+  margin-top:9px;
+  font-size:11px;
+  font-weight:1000;
+  background:#f2f4f2;
+  color:#626a65;
+}
+.detailBtn:hover{background:#e8eee9}
+.moreBtn{
+  display:block;
+  margin:20px auto 0;
+  border:0;
+  border-radius:12px;
+  padding:10px 18px;
+  background:#e9f6ef;
+  color:#438060;
+  font-weight:1000;
+}
+.empty{
+  grid-column:1/-1;
+  padding:50px;
+  text-align:center;
+  color:#929994;
+}
+.footer{
+  text-align:center;
+  padding:28px 0 5px;
+  font-size:12px;
+  color:#a0a5a1;
+}
+
+/* ===== 상세보기 ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:#2d342f70;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:60;
+}
+.modal.on{display:flex}
+.modalCard{
+  width:min(880px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:21px;
+  box-shadow:0 24px 54px #0000002b;
+}
+.modalHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 17px;
+  border-bottom:1px solid #eeeae4;
+}
+.closeBtn{
+  border:0;
+  border-radius:10px;
+  padding:8px 11px;
+  background:#f1f3ef;
+  color:#616963;
+  font-weight:1000;
+}
+.modalBody{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 300px;
+}
+.modalImage{
+  min-height:340px;
+  background:#edf0ed;
+}
+.modalImage img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.modalInfo{padding:18px}
+.dictBox{
+  margin-top:12px;
+  border:1px solid #ece9e2;
+  background:#fcfbf8;
+  border-radius:12px;
+  padding:12px;
+}
+.dictBox b{
+  font-size:12px;
+  color:#4c7d5e;
+}
+.source{
+  margin-top:10px;
+  color:#8c948f;
+  font-size:11px;
+  line-height:1.45;
+}
+
+/* responsive */
+@media(max-width:1160px){
+  .heroInner{grid-template-columns:210px 1fr 330px}
+  .categoryGrid{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .heroInner{grid-template-columns:1fr}
+  .heroMascot{display:none}
+  .categoryGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .categoryGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .toolbar{flex-direction:column;align-items:flex-start}
+  .modalBody{grid-template-columns:1fr}
+}
+@media(max-width:460px){
+  .categoryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid{grid-template-columns:1fr}
+  .searchWrap{flex-wrap:wrap}
+  .searchWrap input{flex-basis:100%}
+  .heroInner,.menuInner,.page{padding-left:12px;padding-right:12px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="heroInner">
+    <div class="heroMascot">
+      <svg class="mascotScene" viewBox="0 0 210 105" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="108" cy="94" rx="78" ry="9" fill="#E9DFC8"/>
+        <rect x="104" y="28" width="74" height="59" rx="8" fill="#86C49B"/>
+        <rect x="113" y="38" width="56" height="39" rx="4" fill="#FFF8DC"/>
+        <path d="M121 49h38M121 58h31M121 67h35" stroke="#D6B778" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="67" cy="42" r="21" fill="#FFD9B3"/>
+        <path d="M45 40c2-17 15-27 29-23 9 2 16 9 17 20-7-5-12-7-18-6-7 1-13 5-17 12z" fill="#5B453C"/>
+        <circle cx="61" cy="43" r="2" fill="#4A3C37"/><circle cx="74" cy="43" r="2" fill="#4A3C37"/>
+        <path d="M63 52c5 4 9 4 14 0" fill="none" stroke="#B16B62" stroke-width="2" stroke-linecap="round"/>
+        <rect x="48" y="62" width="40" height="30" rx="12" fill="#F6B35F"/>
+        <path d="M48 72l-18 12M88 72l20 7" stroke="#FFD9B3" stroke-width="9" stroke-linecap="round"/>
+        <rect x="20" y="80" width="35" height="12" rx="5" fill="#8EC7E8"/>
+        <path d="M30 80V69M43 80V72" stroke="#567F98" stroke-width="3"/>
+        <circle cx="184" cy="77" r="10" fill="#F0B95D"/>
+        <path d="M181 66c-7-8-11-15-6-19 4-3 8 4 10 9 3-6 7-11 11-8 5 4-2 12-7 18" fill="#79B987"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <small>🌱 우리말 보물창고</small>
+      <h1>고유어 탐험 사전</h1>
+      <p>궁금한 우리말을 찾아보고 사진과 뜻을 함께 살펴보세요.</p>
+    </div>
+    <div class="searchWrap">
+      <input id="q" placeholder="예) 노을, 민들레, 빗자루">
+      <button id="searchBtn" class="searchBtn">검색</button>
+    </div>
+  </div>
+</section>
+
+<section class="menuSection">
+  <div class="menuInner">
+    <div class="menuTitle">🧭 주제를 골라 탐험해 보세요</div>
+    <div id="cats" class="categoryGrid"></div>
+  </div>
+</section>
+
+<main class="page">
+  <div class="toolbar">
+    <div>
+      <h2>총 <strong id="totalCount"></strong>개의 고유어가 있어요!</h2>
+      <p>카드를 눌러 사진과 뜻을 자세히 살펴볼 수 있어요.</p>
+    </div>
+    <div class="controls">
+      <span id="visibleCount" class="count"></span>
+      <select id="sort">
+        <option value="basic">기본순</option>
+        <option value="word">가나다순</option>
+        <option value="reverse">가나다 역순</option>
+      </select>
+    </div>
+  </div>
+
+  <section id="grid" class="grid"></section>
+  <button id="moreBtn" class="moreBtn">더 보기</button>
+  <div class="footer">상권쌤 X 두클래스</div>
+</main>
+
+<div id="modal" class="modal">
+  <div class="modalCard">
+    <div class="modalHead">
+      <b id="modalTitle"></b>
+      <button id="closeBtn" class="closeBtn">닫기</button>
+    </div>
+    <div class="modalBody">
+      <div class="modalImage"><img id="modalImg" alt=""></div>
+      <div class="modalInfo">
+        <div class="wordRow"><h3 id="modalWord"></h3><span id="modalBadge" class="badge">고유어</span></div>
+        <div id="modalMeta" class="meta"></div>
+        <div class="dictBox">
+          <b>뜻풀이</b>
+          <div id="modalMeaning" class="meaning" style="display:block;min-height:0;-webkit-line-clamp:unset;overflow:visible"></div>
+        </div>
+        <div id="modalSource" class="source"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cats=[{"id": "nature", "name": "자연·날씨", "emoji": "🌤️"}, {"id": "plant", "name": "식물", "emoji": "🌿"}, {"id": "animal", "name": "동물", "emoji": "🐿️"}, {"id": "body", "name": "몸·사람", "emoji": "🙋"}, {"id": "home", "name": "집·생활", "emoji": "🏠"}, {"id": "food", "name": "먹거리", "emoji": "🍚"}, {"id": "action", "name": "움직임·행동", "emoji": "🏃"}, {"id": "mind", "name": "마음·성격", "emoji": "💛"}, {"id": "sound", "name": "소리·모양", "emoji": "✨"}, {"id": "play", "name": "놀이·옛생활", "emoji": "🪁"}];
+const data=[{"id": 1, "cat": "nature", "word": "하늘", "meaning": "땅 위로 펼쳐진 끝없이 넓은 공간."}, {"id": 2, "cat": "nature", "word": "땅", "meaning": "사람이 밟고 살아가는 지면."}, {"id": 3, "cat": "nature", "word": "해", "meaning": "낮에 하늘에서 밝게 빛나는 별."}, {"id": 4, "cat": "nature", "word": "달", "meaning": "밤하늘에서 밝게 보이는 천체."}, {"id": 5, "cat": "nature", "word": "별", "meaning": "밤하늘에 작게 빛나 보이는 천체."}, {"id": 6, "cat": "nature", "word": "구름", "meaning": "공중에 떠 있는 아주 작은 물방울이나 얼음 알갱이의 모임."}, {"id": 7, "cat": "nature", "word": "비", "meaning": "구름에서 물방울이 되어 떨어지는 것."}, {"id": 8, "cat": "nature", "word": "눈", "meaning": "하늘에서 얼음 결정이 되어 내리는 것."}, {"id": 9, "cat": "nature", "word": "바람", "meaning": "공기가 움직이는 흐름."}, {"id": 10, "cat": "nature", "word": "안개", "meaning": "땅 가까이에 아주 작은 물방울이 떠 있는 현상."}, {"id": 11, "cat": "nature", "word": "이슬", "meaning": "공기 중의 물기가 물방울이 되어 맺힌 것."}, {"id": 12, "cat": "nature", "word": "서리", "meaning": "차가운 날 물기가 얼어 하얗게 붙은 것."}, {"id": 13, "cat": "nature", "word": "얼음", "meaning": "물이 얼어서 단단해진 것."}, {"id": 14, "cat": "nature", "word": "물", "meaning": "마시거나 씻는 데 쓰는 맑은 액체."}, {"id": 15, "cat": "nature", "word": "불", "meaning": "빛과 열을 내며 타는 현상."}, {"id": 16, "cat": "nature", "word": "돌", "meaning": "땅이나 산에서 볼 수 있는 단단한 덩어리."}, {"id": 17, "cat": "nature", "word": "흙", "meaning": "땅을 이루는 부드러운 물질."}, {"id": 18, "cat": "nature", "word": "모래", "meaning": "아주 잘게 부서진 돌 알갱이."}, {"id": 19, "cat": "nature", "word": "바다", "meaning": "짠물이 아주 넓게 모여 있는 곳."}, {"id": 20, "cat": "nature", "word": "내", "meaning": "골짜기나 들을 흐르는 작은 물줄기."}, {"id": 21, "cat": "nature", "word": "개울", "meaning": "골짜기나 들 사이로 흐르는 작은 물길."}, {"id": 22, "cat": "nature", "word": "냇물", "meaning": "내나 개울에 흐르는 물."}, {"id": 23, "cat": "nature", "word": "샘", "meaning": "땅속에서 물이 솟아 나오는 곳."}, {"id": 24, "cat": "nature", "word": "웅덩이", "meaning": "움푹 팬 곳에 물이 고인 곳."}, {"id": 25, "cat": "nature", "word": "바위", "meaning": "아주 크고 단단한 돌."}, {"id": 26, "cat": "nature", "word": "들", "meaning": "논이나 밭이 넓게 펼쳐진 곳."}, {"id": 27, "cat": "nature", "word": "들판", "meaning": "넓게 트인 들."}, {"id": 28, "cat": "nature", "word": "벌판", "meaning": "사방이 넓고 평평하게 트인 땅."}, {"id": 29, "cat": "nature", "word": "언덕", "meaning": "땅이 주변보다 조금 높게 솟은 곳."}, {"id": 30, "cat": "nature", "word": "고개", "meaning": "산이나 언덕을 넘어가는 높은 길목."}, {"id": 31, "cat": "nature", "word": "골짜기", "meaning": "산과 산 사이에 길고 깊게 팬 곳."}, {"id": 32, "cat": "nature", "word": "숲", "meaning": "나무가 많이 모여 자라는 곳."}, {"id": 33, "cat": "nature", "word": "숲길", "meaning": "숲속으로 난 길."}, {"id": 34, "cat": "nature", "word": "오솔길", "meaning": "폭이 좁고 호젓한 길."}, {"id": 35, "cat": "nature", "word": "샛길", "meaning": "큰길에서 갈라져 나간 작은 길."}, {"id": 36, "cat": "nature", "word": "벼랑", "meaning": "낭떠러지처럼 가파르게 깎인 곳."}, {"id": 37, "cat": "nature", "word": "기슭", "meaning": "산이나 언덕의 비탈진 아랫부분."}, {"id": 38, "cat": "nature", "word": "노을", "meaning": "해가 뜨거나 질 무렵 하늘이 붉게 보이는 빛."}, {"id": 39, "cat": "nature", "word": "무지개", "meaning": "비가 갠 뒤 하늘에 여러 빛깔로 둥글게 나타나는 띠."}, {"id": 40, "cat": "nature", "word": "물결", "meaning": "물 위가 오르내리며 움직이는 모양."}, {"id": 41, "cat": "nature", "word": "파도", "meaning": "바닷물이 크게 일렁이며 밀려오는 물결."}, {"id": 42, "cat": "nature", "word": "햇살", "meaning": "해에서 비쳐 오는 빛."}, {"id": 43, "cat": "plant", "word": "나무", "meaning": "줄기와 가지가 단단하게 자라는 식물."}, {"id": 44, "cat": "plant", "word": "풀", "meaning": "줄기가 나무처럼 단단하지 않은 식물."}, {"id": 45, "cat": "plant", "word": "꽃", "meaning": "식물에서 피어나는 아름다운 부분."}, {"id": 46, "cat": "plant", "word": "잎", "meaning": "줄기나 가지에 붙어 자라는 넓적한 부분."}, {"id": 47, "cat": "plant", "word": "줄기", "meaning": "식물의 몸을 받치고 물과 양분이 오가는 부분."}, {"id": 48, "cat": "plant", "word": "뿌리", "meaning": "땅속에서 식물을 붙잡고 물을 빨아들이는 부분."}, {"id": 49, "cat": "plant", "word": "가지", "meaning": "나무나 풀의 줄기에서 뻗어 나온 부분."}, {"id": 50, "cat": "plant", "word": "열매", "meaning": "꽃이 진 뒤 씨를 품고 자라는 부분."}, {"id": 51, "cat": "plant", "word": "씨", "meaning": "새 식물이 자라날 수 있는 작은 알맹이."}, {"id": 52, "cat": "plant", "word": "싹", "meaning": "씨나 뿌리에서 처음 돋아나는 어린 줄기나 잎."}, {"id": 53, "cat": "plant", "word": "꽃잎", "meaning": "꽃을 이루는 얇고 아름다운 잎."}, {"id": 54, "cat": "plant", "word": "나뭇잎", "meaning": "나무의 가지나 줄기에 붙은 잎."}, {"id": 55, "cat": "plant", "word": "솔", "meaning": "소나무를 이르는 우리말."}, {"id": 56, "cat": "plant", "word": "솔잎", "meaning": "소나무의 가늘고 뾰족한 잎."}, {"id": 57, "cat": "plant", "word": "솔방울", "meaning": "소나무에 달리는 단단한 열매 모양의 부분."}, {"id": 58, "cat": "plant", "word": "개나리", "meaning": "봄에 노란 꽃이 피는 나무."}, {"id": 59, "cat": "plant", "word": "민들레", "meaning": "노란 꽃이 피고 하얀 씨앗이 날리는 풀."}, {"id": 60, "cat": "plant", "word": "찔레", "meaning": "가시가 있고 흰 꽃이 피는 나무."}, {"id": 61, "cat": "plant", "word": "해바라기", "meaning": "크고 노란 꽃이 피는 식물."}, {"id": 62, "cat": "plant", "word": "나팔꽃", "meaning": "나팔처럼 생긴 꽃이 피는 덩굴식물."}, {"id": 63, "cat": "plant", "word": "강아지풀", "meaning": "이삭이 강아지 꼬리처럼 보이는 풀."}, {"id": 64, "cat": "plant", "word": "할미꽃", "meaning": "고개를 숙인 듯한 꽃이 피는 식물."}, {"id": 65, "cat": "plant", "word": "억새", "meaning": "가을에 은빛 꽃이삭이 피는 풀."}, {"id": 66, "cat": "plant", "word": "갈대", "meaning": "물가에서 키가 크게 자라는 풀."}, {"id": 67, "cat": "plant", "word": "버들", "meaning": "버드나무를 이르는 말."}, {"id": 68, "cat": "plant", "word": "버들잎", "meaning": "버드나무에 달리는 길고 가는 잎."}, {"id": 69, "cat": "plant", "word": "도토리", "meaning": "참나무 따위에 열리는 단단한 열매."}, {"id": 70, "cat": "plant", "word": "밤", "meaning": "밤나무에 열리는 갈색 열매."}, {"id": 71, "cat": "plant", "word": "대추", "meaning": "대추나무에 열리는 작고 둥근 열매."}, {"id": 72, "cat": "plant", "word": "복숭아", "meaning": "부드러운 털이 있고 달콤한 열매."}, {"id": 73, "cat": "plant", "word": "딸기", "meaning": "작고 붉으며 씨가 겉에 박힌 열매."}, {"id": 74, "cat": "plant", "word": "수박", "meaning": "껍질이 두껍고 속이 붉은 큰 열매."}, {"id": 75, "cat": "plant", "word": "참외", "meaning": "노란 껍질에 흰 줄이 있는 달콤한 열매."}, {"id": 76, "cat": "plant", "word": "오이", "meaning": "길쭉하고 푸른 열매를 먹는 채소."}, {"id": 77, "cat": "plant", "word": "가지", "meaning": "보랏빛 열매를 먹는 채소이기도 한 말."}, {"id": 78, "cat": "plant", "word": "무", "meaning": "뿌리를 먹는 채소."}, {"id": 79, "cat": "plant", "word": "파", "meaning": "길고 가는 잎을 먹는 채소."}, {"id": 80, "cat": "plant", "word": "마늘", "meaning": "알싸한 맛과 냄새가 나는 먹거리 식물."}, {"id": 81, "cat": "plant", "word": "콩", "meaning": "꼬투리 안에 둥근 씨가 맺히는 식물."}, {"id": 82, "cat": "plant", "word": "팥", "meaning": "붉은빛의 작은 콩."}, {"id": 83, "cat": "plant", "word": "보리", "meaning": "이삭이 패는 곡식의 하나."}, {"id": 84, "cat": "plant", "word": "벼", "meaning": "쌀을 얻기 위해 논에서 기르는 곡식."}, {"id": 85, "cat": "animal", "word": "개", "meaning": "사람과 오래 함께 살아온 집짐승."}, {"id": 86, "cat": "animal", "word": "강아지", "meaning": "개의 새끼."}, {"id": 87, "cat": "animal", "word": "고양이", "meaning": "쥐를 잘 잡고 사람과 함께 사는 작은 동물."}, {"id": 88, "cat": "animal", "word": "소", "meaning": "풀을 먹고 사는 큰 집짐승."}, {"id": 89, "cat": "animal", "word": "송아지", "meaning": "소의 새끼."}, {"id": 90, "cat": "animal", "word": "말", "meaning": "사람이나 짐을 태우고 달릴 수 있는 큰 동물."}, {"id": 91, "cat": "animal", "word": "망아지", "meaning": "말의 새끼."}, {"id": 92, "cat": "animal", "word": "돼지", "meaning": "주둥이가 길고 몸이 통통한 집짐승."}, {"id": 93, "cat": "animal", "word": "새끼돼지", "meaning": "어린 돼지."}, {"id": 94, "cat": "animal", "word": "닭", "meaning": "알을 낳고 날개가 있으나 멀리 날지 못하는 집짐승."}, {"id": 95, "cat": "animal", "word": "병아리", "meaning": "닭의 새끼."}, {"id": 96, "cat": "animal", "word": "오리", "meaning": "넓적한 부리와 물갈퀴가 있는 새."}, {"id": 97, "cat": "animal", "word": "토끼", "meaning": "귀가 길고 뒷다리가 발달한 작은 동물."}, {"id": 98, "cat": "animal", "word": "다람쥐", "meaning": "줄무늬가 있고 나무를 잘 타는 작은 동물."}, {"id": 99, "cat": "animal", "word": "두더지", "meaning": "땅속에 굴을 파고 사는 동물."}, {"id": 100, "cat": "animal", "word": "고슴도치", "meaning": "몸에 뾰족한 가시가 많이 난 작은 동물."}, {"id": 101, "cat": "animal", "word": "너구리", "meaning": "얼굴에 검은 무늬가 있는 들짐승."}, {"id": 102, "cat": "animal", "word": "여우", "meaning": "주둥이가 뾰족하고 꼬리가 긴 들짐승."}, {"id": 103, "cat": "animal", "word": "곰", "meaning": "몸집이 크고 털이 많은 들짐승."}, {"id": 104, "cat": "animal", "word": "멧돼지", "meaning": "산과 들에 사는 야생 돼지."}, {"id": 105, "cat": "animal", "word": "사슴", "meaning": "수컷의 머리에 가지 모양 뿔이 나는 동물."}, {"id": 106, "cat": "animal", "word": "까치", "meaning": "검고 흰 깃털과 긴 꼬리를 가진 새."}, {"id": 107, "cat": "animal", "word": "까마귀", "meaning": "온몸이 검은 새."}, {"id": 108, "cat": "animal", "word": "참새", "meaning": "사람 가까이에서 흔히 볼 수 있는 작은 새."}, {"id": 109, "cat": "animal", "word": "제비", "meaning": "봄에 찾아와 처마 밑 등에 둥지를 짓는 새."}, {"id": 110, "cat": "animal", "word": "꿩", "meaning": "수컷의 깃털이 화려한 들새."}, {"id": 111, "cat": "animal", "word": "부엉이", "meaning": "큰 눈을 가지고 주로 밤에 활동하는 새."}, {"id": 112, "cat": "animal", "word": "올빼미", "meaning": "둥근 얼굴과 큰 눈을 가진 밤새."}, {"id": 113, "cat": "animal", "word": "딱따구리", "meaning": "나무줄기를 부리로 쪼는 새."}, {"id": 114, "cat": "animal", "word": "개구리", "meaning": "물가에서 살며 잘 뛰는 동물."}, {"id": 115, "cat": "animal", "word": "올챙이", "meaning": "개구리의 어린 때 모습."}, {"id": 116, "cat": "animal", "word": "도롱뇽", "meaning": "물가나 습한 곳에 사는 작은 양서류."}, {"id": 117, "cat": "animal", "word": "미꾸라지", "meaning": "진흙 속에서 사는 길고 가는 민물고기."}, {"id": 118, "cat": "animal", "word": "송사리", "meaning": "민물에 사는 아주 작은 물고기."}, {"id": 119, "cat": "animal", "word": "메기", "meaning": "입 주위에 수염이 있는 민물고기."}, {"id": 120, "cat": "animal", "word": "나비", "meaning": "큰 날개를 펄럭이며 꽃을 찾아다니는 곤충."}, {"id": 121, "cat": "animal", "word": "벌", "meaning": "꽃의 꿀을 모으거나 침을 가진 곤충."}, {"id": 122, "cat": "animal", "word": "개미", "meaning": "무리를 지어 사는 아주 작은 곤충."}, {"id": 123, "cat": "animal", "word": "파리", "meaning": "사람 주변에서 흔히 볼 수 있는 작은 곤충."}, {"id": 124, "cat": "animal", "word": "모기", "meaning": "사람이나 동물의 피를 빠는 작은 곤충."}, {"id": 125, "cat": "animal", "word": "메뚜기", "meaning": "뒷다리가 길어 잘 뛰는 곤충."}, {"id": 126, "cat": "animal", "word": "잠자리", "meaning": "긴 몸과 네 장의 날개를 가진 곤충."}, {"id": 127, "cat": "body", "word": "사람", "meaning": "생각하고 말하며 살아가는 인간."}, {"id": 128, "cat": "body", "word": "아이", "meaning": "나이가 어린 사람."}, {"id": 129, "cat": "body", "word": "아기", "meaning": "태어난 지 얼마 되지 않은 어린아이."}, {"id": 130, "cat": "body", "word": "어른", "meaning": "다 자란 사람."}, {"id": 131, "cat": "body", "word": "아버지", "meaning": "자기를 낳거나 길러 준 남자 부모."}, {"id": 132, "cat": "body", "word": "어머니", "meaning": "자기를 낳거나 길러 준 여자 부모."}, {"id": 133, "cat": "body", "word": "아빠", "meaning": "아버지를 친근하게 부르는 말."}, {"id": 134, "cat": "body", "word": "엄마", "meaning": "어머니를 친근하게 부르는 말."}, {"id": 135, "cat": "body", "word": "아들", "meaning": "남자 자식."}, {"id": 136, "cat": "body", "word": "딸", "meaning": "여자 자식."}, {"id": 137, "cat": "body", "word": "형", "meaning": "남자가 손위 남자 형제를 부르는 말."}, {"id": 138, "cat": "body", "word": "누나", "meaning": "남자가 손위 여자 형제를 부르는 말."}, {"id": 139, "cat": "body", "word": "오빠", "meaning": "여자가 손위 남자 형제를 부르는 말."}, {"id": 140, "cat": "body", "word": "언니", "meaning": "여자가 손위 여자 형제를 부르는 말."}, {"id": 141, "cat": "body", "word": "할아버지", "meaning": "아버지나 어머니의 아버지."}, {"id": 142, "cat": "body", "word": "할머니", "meaning": "아버지나 어머니의 어머니."}, {"id": 143, "cat": "body", "word": "머리", "meaning": "사람이나 동물의 몸에서 가장 위에 있는 부분."}, {"id": 144, "cat": "body", "word": "얼굴", "meaning": "눈·코·입이 있는 머리 앞부분."}, {"id": 145, "cat": "body", "word": "눈", "meaning": "빛을 보고 사물을 알아보는 몸의 부분."}, {"id": 146, "cat": "body", "word": "코", "meaning": "냄새를 맡고 숨을 쉬는 얼굴의 부분."}, {"id": 147, "cat": "body", "word": "귀", "meaning": "소리를 듣는 몸의 부분."}, {"id": 148, "cat": "body", "word": "입", "meaning": "먹고 말하는 데 쓰는 얼굴의 부분."}, {"id": 149, "cat": "body", "word": "혀", "meaning": "입안에서 맛을 느끼고 말을 돕는 부분."}, {"id": 150, "cat": "body", "word": "이", "meaning": "음식을 씹는 단단한 몸의 부분."}, {"id": 151, "cat": "body", "word": "턱", "meaning": "입 아래쪽의 얼굴 부분."}, {"id": 152, "cat": "body", "word": "목", "meaning": "머리와 몸통을 이어 주는 부분."}, {"id": 153, "cat": "body", "word": "어깨", "meaning": "목 아래 양쪽에서 팔이 이어지는 부분."}, {"id": 154, "cat": "body", "word": "팔", "meaning": "어깨에서 손까지 이어지는 부분."}, {"id": 155, "cat": "body", "word": "손", "meaning": "팔 끝에 붙어 물건을 잡는 부분."}, {"id": 156, "cat": "body", "word": "손목", "meaning": "손과 팔이 이어지는 부분."}, {"id": 157, "cat": "body", "word": "손바닥", "meaning": "손 안쪽의 넓고 평평한 부분."}, {"id": 158, "cat": "body", "word": "손등", "meaning": "손의 바깥쪽 부분."}, {"id": 159, "cat": "body", "word": "손가락", "meaning": "손 끝에서 갈라진 다섯 부분."}, {"id": 160, "cat": "body", "word": "가슴", "meaning": "몸통의 앞쪽 위 부분."}, {"id": 161, "cat": "body", "word": "배", "meaning": "몸통의 앞쪽 가운데 부분."}, {"id": 162, "cat": "body", "word": "등", "meaning": "몸통의 뒤쪽 부분."}, {"id": 163, "cat": "body", "word": "허리", "meaning": "가슴과 엉덩이 사이의 잘록한 부분."}, {"id": 164, "cat": "body", "word": "다리", "meaning": "몸을 받치고 걷게 하는 부분."}, {"id": 165, "cat": "body", "word": "무릎", "meaning": "허벅지와 종아리가 만나는 관절 부분."}, {"id": 166, "cat": "body", "word": "발", "meaning": "다리 끝에서 땅을 딛는 부분."}, {"id": 167, "cat": "body", "word": "발목", "meaning": "다리와 발이 이어지는 부분."}, {"id": 168, "cat": "body", "word": "발가락", "meaning": "발 끝에서 갈라진 부분."}, {"id": 169, "cat": "home", "word": "집", "meaning": "사람이 들어가 생활하는 곳."}, {"id": 170, "cat": "home", "word": "방", "meaning": "집 안에서 벽으로 나누어 놓은 공간."}, {"id": 171, "cat": "home", "word": "마당", "meaning": "집 앞이나 뒤의 넓은 빈터."}, {"id": 172, "cat": "home", "word": "뜰", "meaning": "집이나 건물 앞뒤에 있는 넓은 공간."}, {"id": 173, "cat": "home", "word": "문", "meaning": "사람이 드나들 수 있게 만든 출입구."}, {"id": 174, "cat": "home", "word": "창", "meaning": "빛이나 바람이 들어오도록 벽에 낸 곳."}, {"id": 175, "cat": "home", "word": "지붕", "meaning": "비나 눈을 막도록 집 위를 덮은 부분."}, {"id": 176, "cat": "home", "word": "담", "meaning": "집이나 땅의 둘레를 둘러막은 것."}, {"id": 177, "cat": "home", "word": "울타리", "meaning": "집이나 밭 둘레를 막아 놓은 것."}, {"id": 178, "cat": "home", "word": "부엌", "meaning": "음식을 만들고 설거지하는 공간."}, {"id": 179, "cat": "home", "word": "아궁이", "meaning": "불을 때도록 만든 구멍."}, {"id": 180, "cat": "home", "word": "구들", "meaning": "방바닥을 따뜻하게 데우는 옛 난방 시설."}, {"id": 181, "cat": "home", "word": "장독", "meaning": "간장이나 된장 따위를 담아 두는 큰 독."}, {"id": 182, "cat": "home", "word": "솥", "meaning": "밥이나 국을 끓이는 큰 그릇."}, {"id": 183, "cat": "home", "word": "가마솥", "meaning": "아궁이에 걸어 쓰는 크고 무거운 솥."}, {"id": 184, "cat": "home", "word": "그릇", "meaning": "음식이나 물건을 담는 도구."}, {"id": 185, "cat": "home", "word": "바가지", "meaning": "물을 뜨거나 물건을 담는 둥근 그릇."}, {"id": 186, "cat": "home", "word": "숟가락", "meaning": "음식을 떠먹는 데 쓰는 도구."}, {"id": 187, "cat": "home", "word": "젓가락", "meaning": "음식을 집어 먹는 데 쓰는 두 가닥의 도구."}, {"id": 188, "cat": "home", "word": "칼", "meaning": "물건을 베거나 써는 날카로운 도구."}, {"id": 189, "cat": "home", "word": "가위", "meaning": "종이나 천 등을 자르는 도구."}, {"id": 190, "cat": "home", "word": "바늘", "meaning": "실을 꿰어 옷감 등을 꿰매는 도구."}, {"id": 191, "cat": "home", "word": "실", "meaning": "옷감을 짜거나 바느질하는 데 쓰는 가는 줄."}, {"id": 192, "cat": "home", "word": "빗", "meaning": "머리카락을 가지런히 하는 도구."}, {"id": 193, "cat": "home", "word": "거울", "meaning": "얼굴이나 모습을 비추어 보는 물건."}, {"id": 194, "cat": "home", "word": "빗자루", "meaning": "바닥을 쓸어 내는 도구."}, {"id": 195, "cat": "home", "word": "쓰레받기", "meaning": "쓸어 모은 쓰레기를 받아 내는 도구."}, {"id": 196, "cat": "home", "word": "보자기", "meaning": "물건을 싸거나 덮는 네모난 천."}, {"id": 197, "cat": "home", "word": "베개", "meaning": "잠잘 때 머리를 받치는 물건."}, {"id": 198, "cat": "home", "word": "이불", "meaning": "잠잘 때 몸 위에 덮는 물건."}, {"id": 199, "cat": "home", "word": "돗자리", "meaning": "바닥에 펴서 앉거나 눕는 자리."}, {"id": 200, "cat": "home", "word": "옷", "meaning": "몸에 입는 물건."}, {"id": 201, "cat": "home", "word": "치마", "meaning": "허리 아래를 둘러 입는 옷."}, {"id": 202, "cat": "home", "word": "바지", "meaning": "두 다리를 따로 넣어 입는 옷."}, {"id": 203, "cat": "home", "word": "저고리", "meaning": "한복의 윗옷."}, {"id": 204, "cat": "home", "word": "버선", "meaning": "한복을 입을 때 발에 신는 물건."}, {"id": 205, "cat": "home", "word": "신", "meaning": "발에 신는 물건을 이르는 말."}, {"id": 206, "cat": "home", "word": "옷걸이", "meaning": "옷을 걸어 두는 도구."}, {"id": 207, "cat": "home", "word": "보따리", "meaning": "물건을 보자기 등에 싸서 꾸린 것."}, {"id": 208, "cat": "home", "word": "꾸러미", "meaning": "여러 물건을 한데 싸거나 묶어 놓은 것."}, {"id": 209, "cat": "home", "word": "짐", "meaning": "옮기기 위해 싸거나 꾸린 물건."}, {"id": 210, "cat": "home", "word": "살림", "meaning": "한 집안에서 생활하며 쓰는 물건과 생활 일."}, {"id": 211, "cat": "food", "word": "밥", "meaning": "쌀 같은 곡식을 익혀 만든 먹거리."}, {"id": 212, "cat": "food", "word": "쌀", "meaning": "벼의 껍질을 벗긴 알곡."}, {"id": 213, "cat": "food", "word": "벼", "meaning": "논에서 길러 쌀을 얻는 곡식."}, {"id": 214, "cat": "food", "word": "보리", "meaning": "이삭이 패는 곡식의 하나."}, {"id": 215, "cat": "food", "word": "콩", "meaning": "꼬투리 안에 둥근 씨가 맺히는 곡식."}, {"id": 216, "cat": "food", "word": "팥", "meaning": "붉은빛을 띠는 작은 콩."}, {"id": 217, "cat": "food", "word": "깨", "meaning": "작은 씨를 먹거나 기름을 짜는 식물."}, {"id": 218, "cat": "food", "word": "꿀", "meaning": "벌이 꽃에서 모아 만드는 달콤한 먹거리."}, {"id": 219, "cat": "food", "word": "엿", "meaning": "곡식을 삭혀 달고 끈기 있게 만든 먹거리."}, {"id": 220, "cat": "food", "word": "떡", "meaning": "곡식가루를 찌거나 쳐서 만든 먹거리."}, {"id": 221, "cat": "food", "word": "가래떡", "meaning": "길고 둥글게 뽑은 흰 떡."}, {"id": 222, "cat": "food", "word": "송편", "meaning": "반달 모양으로 빚어 찐 떡."}, {"id": 223, "cat": "food", "word": "인절미", "meaning": "찹쌀떡에 고물을 묻힌 떡."}, {"id": 224, "cat": "food", "word": "국", "meaning": "물에 여러 재료를 넣고 끓인 먹거리."}, {"id": 225, "cat": "food", "word": "찌개", "meaning": "국보다 국물을 적게 하여 짜게 끓인 먹거리."}, {"id": 226, "cat": "food", "word": "나물", "meaning": "먹을 수 있는 풀이나 그것을 무쳐 만든 먹거리."}, {"id": 227, "cat": "food", "word": "쌈", "meaning": "채소 잎에 밥이나 고기를 싸서 먹는 것."}, {"id": 228, "cat": "food", "word": "고기", "meaning": "동물의 살을 먹거리로 이르는 말."}, {"id": 229, "cat": "food", "word": "불고기", "meaning": "고기를 양념하여 불에 구워 먹는 음식."}, {"id": 230, "cat": "food", "word": "비빔밥", "meaning": "밥에 여러 재료를 넣고 비벼 먹는 음식."}, {"id": 231, "cat": "food", "word": "볶음밥", "meaning": "밥과 재료를 함께 볶아 만든 음식."}, {"id": 232, "cat": "food", "word": "주먹밥", "meaning": "밥을 주먹처럼 둥글게 뭉친 음식."}, {"id": 233, "cat": "food", "word": "국밥", "meaning": "국에 밥을 말아 먹는 음식."}, {"id": 234, "cat": "food", "word": "쌈밥", "meaning": "채소 잎에 밥을 싸서 먹는 음식."}, {"id": 235, "cat": "food", "word": "누룽지", "meaning": "솥이나 냄비 바닥에 눌어붙은 밥."}, {"id": 236, "cat": "food", "word": "숭늉", "meaning": "누룽지에 물을 부어 끓인 물."}, {"id": 237, "cat": "food", "word": "부침개", "meaning": "반죽에 여러 재료를 넣어 넓적하게 부친 음식."}, {"id": 238, "cat": "food", "word": "달걀", "meaning": "닭이 낳은 알."}, {"id": 239, "cat": "food", "word": "삶은달걀", "meaning": "물에 삶아 익힌 달걀."}, {"id": 240, "cat": "food", "word": "물김치", "meaning": "국물이 많게 담근 김치."}, {"id": 241, "cat": "food", "word": "겉절이", "meaning": "채소를 바로 무쳐 먹도록 만든 먹거리."}, {"id": 242, "cat": "food", "word": "김밥", "meaning": "김에 밥과 여러 재료를 넣어 말아 만든 음식."}, {"id": 243, "cat": "food", "word": "떡볶이", "meaning": "떡을 양념에 볶아 만든 음식."}, {"id": 244, "cat": "food", "word": "떡국", "meaning": "떡을 넣어 끓인 국."}, {"id": 245, "cat": "food", "word": "콩밥", "meaning": "콩을 넣어 지은 밥."}, {"id": 246, "cat": "food", "word": "보리밥", "meaning": "보리를 섞어 지은 밥."}, {"id": 247, "cat": "food", "word": "팥밥", "meaning": "팥을 넣어 지은 밥."}, {"id": 248, "cat": "food", "word": "깨소금", "meaning": "깨를 볶아 빻고 소금을 섞은 양념."}, {"id": 249, "cat": "food", "word": "김", "meaning": "바다에서 자라는 해조류를 얇게 말린 먹거리."}, {"id": 250, "cat": "food", "word": "미역", "meaning": "바다에서 자라며 국 등에 넣어 먹는 해조류."}, {"id": 251, "cat": "food", "word": "멸치", "meaning": "작고 가는 바닷물고기."}, {"id": 252, "cat": "food", "word": "조개", "meaning": "두 장의 단단한 껍데기를 가진 물속 동물."}, {"id": 253, "cat": "action", "word": "가다", "meaning": "한 곳에서 다른 곳으로 움직이다."}, {"id": 254, "cat": "action", "word": "오다", "meaning": "말하는 쪽으로 움직여 가까워지다."}, {"id": 255, "cat": "action", "word": "걷다", "meaning": "두 발을 번갈아 내디디며 움직이다."}, {"id": 256, "cat": "action", "word": "뛰다", "meaning": "몸을 솟구치며 빠르게 움직이다."}, {"id": 257, "cat": "action", "word": "달리다", "meaning": "빠른 걸음으로 앞으로 나아가다."}, {"id": 258, "cat": "action", "word": "기다", "meaning": "배를 땅에 가까이 대고 팔다리로 움직이다."}, {"id": 259, "cat": "action", "word": "오르다", "meaning": "아래에서 위로 움직이다."}, {"id": 260, "cat": "action", "word": "내리다", "meaning": "위에서 아래로 움직이다."}, {"id": 261, "cat": "action", "word": "건너다", "meaning": "한쪽에서 다른 쪽으로 넘어가다."}, {"id": 262, "cat": "action", "word": "돌다", "meaning": "어떤 곳을 중심으로 빙글 움직이다."}, {"id": 263, "cat": "action", "word": "멈추다", "meaning": "움직이거나 하던 일을 그치다."}, {"id": 264, "cat": "action", "word": "앉다", "meaning": "엉덩이를 바닥이나 의자에 대다."}, {"id": 265, "cat": "action", "word": "서다", "meaning": "몸을 곧게 세워 발로 버티다."}, {"id": 266, "cat": "action", "word": "눕다", "meaning": "몸을 바닥이나 자리에 대고 가로놓이다."}, {"id": 267, "cat": "action", "word": "일어나다", "meaning": "앉거나 누운 자리에서 몸을 세우다."}, {"id": 268, "cat": "action", "word": "잡다", "meaning": "손으로 물건을 쥐다."}, {"id": 269, "cat": "action", "word": "놓다", "meaning": "잡고 있던 것을 손에서 떼다."}, {"id": 270, "cat": "action", "word": "들다", "meaning": "물건을 위로 올리거나 손에 가지다."}, {"id": 271, "cat": "action", "word": "밀다", "meaning": "힘을 주어 앞쪽으로 움직이게 하다."}, {"id": 272, "cat": "action", "word": "당기다", "meaning": "힘을 주어 자기 쪽으로 오게 하다."}, {"id": 273, "cat": "action", "word": "던지다", "meaning": "손에 든 것을 힘주어 날려 보내다."}, {"id": 274, "cat": "action", "word": "받다", "meaning": "오는 물건을 손이나 몸으로 잡다."}, {"id": 275, "cat": "action", "word": "차다", "meaning": "발로 힘껏 건드리거나 밀다."}, {"id": 276, "cat": "action", "word": "치다", "meaning": "손이나 도구로 때리거나 움직이다."}, {"id": 277, "cat": "action", "word": "쌓다", "meaning": "물건을 겹겹이 올려놓다."}, {"id": 278, "cat": "action", "word": "담다", "meaning": "그릇이나 곳 안에 물건을 넣다."}, {"id": 279, "cat": "action", "word": "꺼내다", "meaning": "안에 있는 것을 밖으로 내다."}, {"id": 280, "cat": "action", "word": "넣다", "meaning": "밖에 있는 것을 안으로 들여보내다."}, {"id": 281, "cat": "action", "word": "열다", "meaning": "닫힌 것을 벌리거나 트이게 하다."}, {"id": 282, "cat": "action", "word": "닫다", "meaning": "열린 것을 막거나 덮다."}, {"id": 283, "cat": "action", "word": "묶다", "meaning": "끈 따위로 둘러 매다."}, {"id": 284, "cat": "action", "word": "풀다", "meaning": "묶이거나 얽힌 것을 느슨하게 하다."}, {"id": 285, "cat": "action", "word": "접다", "meaning": "종이나 천을 꺾어 포개다."}, {"id": 286, "cat": "action", "word": "펴다", "meaning": "접힌 것을 넓게 벌리다."}, {"id": 287, "cat": "action", "word": "씻다", "meaning": "물 등을 써서 더러운 것을 없애다."}, {"id": 288, "cat": "action", "word": "닦다", "meaning": "문질러 깨끗하게 하다."}, {"id": 289, "cat": "action", "word": "쓸다", "meaning": "빗자루 따위로 바닥을 문질러 치우다."}, {"id": 290, "cat": "action", "word": "줍다", "meaning": "바닥에 있는 것을 집어 들다."}, {"id": 291, "cat": "action", "word": "찾다", "meaning": "어디 있는지 알아내려고 살피다."}, {"id": 292, "cat": "action", "word": "숨다", "meaning": "남이 보지 못하게 몸을 감추다."}, {"id": 293, "cat": "action", "word": "웃다", "meaning": "기쁘거나 재미있어 얼굴에 즐거움을 나타내다."}, {"id": 294, "cat": "action", "word": "울다", "meaning": "슬프거나 아파 눈물을 흘리다."}, {"id": 295, "cat": "mind", "word": "마음", "meaning": "생각이나 느낌이 일어나는 속."}, {"id": 296, "cat": "mind", "word": "생각", "meaning": "머릿속으로 떠올리거나 판단하는 것."}, {"id": 297, "cat": "mind", "word": "기쁨", "meaning": "마음이 즐겁고 좋은 느낌."}, {"id": 298, "cat": "mind", "word": "슬픔", "meaning": "마음이 아프고 서러운 느낌."}, {"id": 299, "cat": "mind", "word": "두려움", "meaning": "무섭고 겁나는 마음."}, {"id": 300, "cat": "mind", "word": "부끄러움", "meaning": "창피하거나 쑥스러운 마음."}, {"id": 301, "cat": "mind", "word": "그리움", "meaning": "보고 싶거나 만나고 싶은 마음."}, {"id": 302, "cat": "mind", "word": "고마움", "meaning": "도움을 받거나 좋은 일을 겪어 감사한 마음."}, {"id": 303, "cat": "mind", "word": "미움", "meaning": "싫어하고 꺼리는 마음."}, {"id": 304, "cat": "mind", "word": "사랑", "meaning": "아끼고 소중히 여기는 마음."}, {"id": 305, "cat": "mind", "word": "꿈", "meaning": "잠잘 때 보는 모습이나 이루고 싶은 바람."}, {"id": 306, "cat": "mind", "word": "바람", "meaning": "마음속으로 이루어지기를 원하는 일."}, {"id": 307, "cat": "mind", "word": "걱정", "meaning": "잘못될까 마음을 놓지 못하는 생각."}, {"id": 308, "cat": "mind", "word": "겁", "meaning": "무섭거나 두려워하는 마음."}, {"id": 309, "cat": "mind", "word": "힘", "meaning": "일을 하거나 버틸 수 있는 능력."}, {"id": 310, "cat": "mind", "word": "용기", "meaning": "두려움을 이겨 내고 해내려는 마음."}, {"id": 311, "cat": "mind", "word": "참을성", "meaning": "어려움이나 괴로움을 견디는 성질."}, {"id": 312, "cat": "mind", "word": "차분하다", "meaning": "마음이나 행동이 가라앉아 조용하다."}, {"id": 313, "cat": "mind", "word": "착하다", "meaning": "마음씨나 행동이 바르고 곱다."}, {"id": 314, "cat": "mind", "word": "씩씩하다", "meaning": "기운차고 굳세다."}, {"id": 315, "cat": "mind", "word": "슬기롭다", "meaning": "생각이 밝고 일을 잘 헤아리다."}, {"id": 316, "cat": "mind", "word": "어질다", "meaning": "마음이 너그럽고 착하다."}, {"id": 317, "cat": "mind", "word": "맑다", "meaning": "마음이나 성질이 깨끗하고 밝다."}, {"id": 318, "cat": "mind", "word": "밝다", "meaning": "표정이나 성격이 환하고 활기차다."}, {"id": 319, "cat": "mind", "word": "다정하다", "meaning": "마음이 따뜻하고 친근하다."}, {"id": 320, "cat": "mind", "word": "즐겁다", "meaning": "마음에 기쁨이 가득하다."}, {"id": 321, "cat": "mind", "word": "반갑다", "meaning": "보고 싶던 사람을 만나 기쁘다."}, {"id": 322, "cat": "mind", "word": "서럽다", "meaning": "억울하고 슬픈 느낌이 있다."}, {"id": 323, "cat": "mind", "word": "외롭다", "meaning": "곁에 사람이 없어 쓸쓸하다."}, {"id": 324, "cat": "mind", "word": "쓸쓸하다", "meaning": "마음이 허전하고 외롭다."}, {"id": 325, "cat": "mind", "word": "아쉽다", "meaning": "모자라거나 놓쳐서 마음에 차지 않다."}, {"id": 326, "cat": "mind", "word": "아깝다", "meaning": "버리거나 잃기에는 가치가 있다."}, {"id": 327, "cat": "mind", "word": "답답하다", "meaning": "속이 막힌 듯 시원하지 않다."}, {"id": 328, "cat": "mind", "word": "귀엽다", "meaning": "사랑스럽고 예쁘게 느껴지다."}, {"id": 329, "cat": "mind", "word": "예쁘다", "meaning": "모양이나 모습이 보기 좋다."}, {"id": 330, "cat": "mind", "word": "밉다", "meaning": "마음에 들지 않고 싫다."}, {"id": 331, "cat": "mind", "word": "좋다", "meaning": "마음에 들고 만족스럽다."}, {"id": 332, "cat": "mind", "word": "싫다", "meaning": "마음에 들지 않다."}, {"id": 333, "cat": "mind", "word": "부럽다", "meaning": "남의 좋은 점을 나도 갖고 싶다."}, {"id": 334, "cat": "mind", "word": "놀라다", "meaning": "뜻밖의 일을 보고 갑자기 마음이 흔들리다."}, {"id": 335, "cat": "mind", "word": "기뻐하다", "meaning": "좋은 일을 만나 즐거운 마음을 나타내다."}, {"id": 336, "cat": "mind", "word": "아끼다", "meaning": "소중하게 여기고 함부로 쓰지 않다."}, {"id": 337, "cat": "sound", "word": "쨍쨍", "meaning": "햇볕이 매우 강하게 내리쬐는 모양."}, {"id": 338, "cat": "sound", "word": "반짝반짝", "meaning": "작은 빛이 잇따라 밝게 빛나는 모양."}, {"id": 339, "cat": "sound", "word": "번쩍번쩍", "meaning": "큰 빛이 갑자기 잇따라 나타나는 모양."}, {"id": 340, "cat": "sound", "word": "살랑살랑", "meaning": "바람이 가볍고 부드럽게 부는 모양."}, {"id": 341, "cat": "sound", "word": "솔솔", "meaning": "바람이나 냄새가 부드럽게 이어지는 모양."}, {"id": 342, "cat": "sound", "word": "쌩쌩", "meaning": "바람이나 물체가 매우 빠르게 움직이는 모양."}, {"id": 343, "cat": "sound", "word": "주룩주룩", "meaning": "비나 물이 굵게 계속 흐르는 모양."}, {"id": 344, "cat": "sound", "word": "보슬보슬", "meaning": "비나 눈이 가늘고 성기게 내리는 모양."}, {"id": 345, "cat": "sound", "word": "소복소복", "meaning": "눈이나 가루가 포근하게 쌓이는 모양."}, {"id": 346, "cat": "sound", "word": "송골송골", "meaning": "땀이나 물방울이 작은 알처럼 맺힌 모양."}, {"id": 347, "cat": "sound", "word": "몽글몽글", "meaning": "작고 둥근 덩이가 부드럽게 모인 모양."}, {"id": 348, "cat": "sound", "word": "둥실둥실", "meaning": "가볍게 떠서 천천히 움직이는 모양."}, {"id": 349, "cat": "sound", "word": "데굴데굴", "meaning": "둥근 것이 계속 굴러가는 모양."}, {"id": 350, "cat": "sound", "word": "빙글빙글", "meaning": "한자리에서 자꾸 둥글게 도는 모양."}, {"id": 351, "cat": "sound", "word": "폴짝폴짝", "meaning": "가볍게 자꾸 뛰는 모양."}, {"id": 352, "cat": "sound", "word": "성큼성큼", "meaning": "큰 걸음으로 힘차게 걷는 모양."}, {"id": 353, "cat": "sound", "word": "사뿐사뿐", "meaning": "소리가 거의 나지 않게 가볍게 걷는 모양."}, {"id": 354, "cat": "sound", "word": "살금살금", "meaning": "남이 모르게 조심스럽게 움직이는 모양."}, {"id": 355, "cat": "sound", "word": "엉금엉금", "meaning": "큰 몸을 느리게 기어가는 모양."}, {"id": 356, "cat": "sound", "word": "아장아장", "meaning": "아기가 몸을 흔들며 작게 걷는 모양."}, {"id": 357, "cat": "sound", "word": "뒤뚱뒤뚱", "meaning": "몸을 좌우로 흔들며 걷는 모양."}, {"id": 358, "cat": "sound", "word": "꼬물꼬물", "meaning": "작은 것이 몸을 자꾸 움직이는 모양."}, {"id": 359, "cat": "sound", "word": "꿈틀꿈틀", "meaning": "몸을 잇따라 굽혔다 펴는 모양."}, {"id": 360, "cat": "sound", "word": "꾸벅꾸벅", "meaning": "머리를 자꾸 숙였다 드는 모양."}, {"id": 361, "cat": "sound", "word": "방긋방긋", "meaning": "입을 살짝 벌리며 예쁘게 자꾸 웃는 모양."}, {"id": 362, "cat": "sound", "word": "싱글벙글", "meaning": "기분이 좋아 환하게 웃는 모양."}, {"id": 363, "cat": "sound", "word": "엉엉", "meaning": "목소리를 크게 내어 우는 소리."}, {"id": 364, "cat": "sound", "word": "흑흑", "meaning": "숨을 들이쉬며 낮게 우는 소리."}, {"id": 365, "cat": "sound", "word": "깔깔", "meaning": "밝고 큰 소리로 웃는 소리."}, {"id": 366, "cat": "sound", "word": "하하", "meaning": "입을 크게 벌리고 웃는 소리."}, {"id": 367, "cat": "sound", "word": "톡톡", "meaning": "작고 단단한 것이 가볍게 잇따라 부딪는 소리."}, {"id": 368, "cat": "sound", "word": "똑똑", "meaning": "문 등을 가볍게 두드리는 소리."}, {"id": 369, "cat": "sound", "word": "쿵쿵", "meaning": "크고 무거운 것이 잇따라 부딪는 소리."}, {"id": 370, "cat": "sound", "word": "쾅", "meaning": "크고 단단한 것이 세게 부딪는 소리."}, {"id": 371, "cat": "sound", "word": "찰랑찰랑", "meaning": "물이 그릇 가장자리에 자꾸 부딪는 모양이나 소리."}, {"id": 372, "cat": "sound", "word": "졸졸", "meaning": "적은 물이 끊이지 않고 흐르는 소리나 모양."}, {"id": 373, "cat": "sound", "word": "콸콸", "meaning": "많은 물이 세차게 쏟아지는 소리."}, {"id": 374, "cat": "sound", "word": "바스락바스락", "meaning": "마른 잎이나 종이가 가볍게 스치는 소리."}, {"id": 375, "cat": "sound", "word": "사각사각", "meaning": "연한 것을 자르거나 씹을 때 나는 소리."}, {"id": 376, "cat": "sound", "word": "아삭아삭", "meaning": "싱싱한 채소나 과일을 씹는 소리."}, {"id": 377, "cat": "sound", "word": "보글보글", "meaning": "작은 거품이 잇따라 솟아오르는 모양."}, {"id": 378, "cat": "sound", "word": "지글지글", "meaning": "기름에 음식이 익으며 나는 소리."}, {"id": 379, "cat": "play", "word": "놀이", "meaning": "즐겁게 시간을 보내기 위해 하는 활동."}, {"id": 380, "cat": "play", "word": "그네", "meaning": "줄에 매단 판에 앉아 앞뒤로 움직이는 놀이기구."}, {"id": 381, "cat": "play", "word": "팽이", "meaning": "축을 중심으로 빙글빙글 돌리는 장난감."}, {"id": 382, "cat": "play", "word": "윷", "meaning": "윷놀이에서 던지는 네 개의 나무 막대."}, {"id": 383, "cat": "play", "word": "윷놀이", "meaning": "윷을 던져 말을 움직이는 전통 놀이."}, {"id": 384, "cat": "play", "word": "제기", "meaning": "발로 차며 노는 작은 놀이 도구."}, {"id": 385, "cat": "play", "word": "제기차기", "meaning": "제기를 발로 차서 떨어뜨리지 않는 놀이."}, {"id": 386, "cat": "play", "word": "딱지", "meaning": "종이를 접어 만든 납작한 놀이 도구."}, {"id": 387, "cat": "play", "word": "딱지치기", "meaning": "딱지를 쳐서 뒤집는 놀이."}, {"id": 388, "cat": "play", "word": "연", "meaning": "바람을 받아 하늘에 띄우는 놀이 도구."}, {"id": 389, "cat": "play", "word": "연날리기", "meaning": "줄에 맨 연을 바람에 띄워 노는 놀이."}, {"id": 390, "cat": "play", "word": "숨바꼭질", "meaning": "한 사람이 술래가 되어 숨은 사람을 찾는 놀이."}, {"id": 391, "cat": "play", "word": "술래", "meaning": "놀이에서 다른 사람을 잡거나 찾는 역할."}, {"id": 392, "cat": "play", "word": "잡기놀이", "meaning": "한 사람이 다른 사람을 쫓아 잡는 놀이."}, {"id": 393, "cat": "play", "word": "꼬리잡기", "meaning": "줄지어 서서 상대편의 꼬리를 잡는 놀이."}, {"id": 394, "cat": "play", "word": "땅따먹기", "meaning": "선을 그어 자기 땅을 넓혀 가는 놀이."}, {"id": 395, "cat": "play", "word": "공기놀이", "meaning": "작은 공깃돌을 던지고 받는 놀이."}, {"id": 396, "cat": "play", "word": "비석치기", "meaning": "돌을 던져 세워 둔 돌을 쓰러뜨리는 놀이."}, {"id": 397, "cat": "play", "word": "널뛰기", "meaning": "긴 널빤지 양쪽에서 번갈아 뛰는 전통 놀이."}, {"id": 398, "cat": "play", "word": "씨름", "meaning": "두 사람이 힘과 기술로 상대를 넘어뜨리는 겨루기."}, {"id": 399, "cat": "play", "word": "팽이치기", "meaning": "팽이를 돌리고 채로 쳐서 오래 돌게 하는 놀이."}, {"id": 400, "cat": "play", "word": "고무줄놀이", "meaning": "고무줄을 걸어 놓고 노래에 맞춰 뛰는 놀이."}, {"id": 401, "cat": "play", "word": "소꿉놀이", "meaning": "살림하는 흉내를 내며 하는 놀이."}, {"id": 402, "cat": "play", "word": "말타기놀이", "meaning": "사람이나 놀이기구를 말처럼 타는 놀이."}, {"id": 403, "cat": "play", "word": "기차놀이", "meaning": "줄지어 기차처럼 움직이며 하는 놀이."}, {"id": 404, "cat": "play", "word": "모래놀이", "meaning": "모래를 파거나 쌓으며 하는 놀이."}, {"id": 405, "cat": "play", "word": "물놀이", "meaning": "물속이나 물가에서 즐기는 놀이."}, {"id": 406, "cat": "play", "word": "눈싸움", "meaning": "눈을 뭉쳐 서로 던지며 하는 놀이."}, {"id": 407, "cat": "play", "word": "눈사람", "meaning": "눈을 뭉쳐 사람 모양으로 만든 것."}, {"id": 408, "cat": "play", "word": "썰매", "meaning": "눈이나 얼음 위를 미끄러져 가는 놀이기구."}, {"id": 409, "cat": "play", "word": "썰매타기", "meaning": "썰매를 타고 눈이나 얼음 위를 미끄러지는 놀이."}, {"id": 410, "cat": "play", "word": "줄다리기", "meaning": "두 편이 줄을 잡아당겨 힘을 겨루는 놀이."}, {"id": 411, "cat": "play", "word": "널빤지", "meaning": "폭이 넓고 길게 켠 나무 판."}, {"id": 412, "cat": "play", "word": "새끼줄", "meaning": "볏짚 등을 꼬아 만든 줄."}, {"id": 413, "cat": "play", "word": "짚", "meaning": "벼에서 낟알을 털어 낸 뒤 남은 줄기."}, {"id": 414, "cat": "play", "word": "멍석", "meaning": "짚으로 넓고 두껍게 엮어 만든 자리."}, {"id": 415, "cat": "play", "word": "지게", "meaning": "짐을 등에 져 나르는 옛 도구."}, {"id": 416, "cat": "play", "word": "절구", "meaning": "곡식을 찧는 데 쓰는 옛 도구."}, {"id": 417, "cat": "play", "word": "방아", "meaning": "곡식을 찧거나 빻는 데 쓰는 도구."}, {"id": 418, "cat": "play", "word": "키", "meaning": "곡식에서 쭉정이 등을 골라내는 옛 도구."}, {"id": 419, "cat": "play", "word": "호미", "meaning": "밭의 풀을 매거나 흙을 파는 작은 농기구."}, {"id": 420, "cat": "play", "word": "낫", "meaning": "풀이나 곡식을 베는 데 쓰는 굽은 날의 도구."}];
+const photoQueryMap={"nature|하늘": "sky", "nature|땅": "ground soil", "nature|해": "sun", "nature|달": "moon", "nature|별": "star night sky", "nature|구름": "clouds", "nature|비": "rain", "nature|눈": "snow", "nature|바람": "wind trees", "nature|안개": "fog landscape", "nature|이슬": "dew grass", "nature|서리": "frost leaf", "nature|얼음": "ice", "nature|물": "water", "nature|불": "fire", "nature|돌": "stone rock", "nature|흙": "soil dirt", "nature|모래": "sand", "nature|바다": "sea ocean", "nature|내": "stream creek", "nature|강": "river", "nature|산": "mountain", "nature|고개": "hill pass", "nature|들": "field meadow", "nature|벌": "plain field", "nature|섬": "island", "nature|노을": "sunset", "nature|무지개": "rainbow", "nature|우레": "thunderstorm", "nature|벼락": "lightning", "nature|샘": "spring water", "nature|폭포": "waterfall", "plant|나무": "tree", "plant|풀": "grass", "plant|꽃": "flower", "plant|잎": "leaf", "plant|줄기": "plant stem", "plant|뿌리": "roots", "plant|가지": "tree branch", "plant|열매": "fruit", "plant|씨": "seed", "plant|싹": "sprout", "plant|꽃잎": "flower petals", "plant|나뭇잎": "tree leaves", "plant|솔": "pine tree", "plant|솔잎": "pine needles", "plant|솔방울": "pine cone", "plant|개나리": "forsythia", "plant|민들레": "dandelion", "plant|찔레": "rose bush", "plant|해바라기": "sunflower", "plant|나팔꽃": "morning glory flower", "plant|진달래": "azalea", "plant|철쭉": "azalea shrub", "plant|억새": "silver grass", "plant|갈대": "reeds", "plant|대나무": "bamboo", "plant|무": "radish", "plant|배추": "napa cabbage", "plant|고추": "chili pepper", "plant|오이": "cucumber", "plant|호박": "pumpkin", "animal|개": "dog", "animal|강아지": "puppy", "animal|고양이": "cat", "animal|소": "cow", "animal|송아지": "calf animal", "animal|말": "horse", "animal|망아지": "foal horse", "animal|돼지": "pig", "animal|새끼돼지": "piglet", "animal|닭": "chicken", "animal|병아리": "chick", "animal|오리": "duck", "animal|토끼": "rabbit", "animal|다람쥐": "squirrel", "animal|두더지": "mole animal", "animal|고슴도치": "hedgehog", "animal|너구리": "raccoon dog", "animal|여우": "fox", "animal|곰": "bear", "animal|멧돼지": "wild boar", "animal|사슴": "deer", "animal|염소": "goat", "animal|양": "sheep", "animal|호랑이": "tiger", "animal|사자": "lion", "animal|독수리": "eagle", "animal|참새": "sparrow", "animal|나비": "butterfly", "animal|벌레": "insect", "animal|개미": "ant", "animal|거미": "spider", "animal|물고기": "fish", "animal|고래": "whale", "animal|게": "crab", "animal|개구리": "frog", "body|사람": "person", "body|아이": "child", "body|아기": "baby", "body|어른": "adult", "body|아버지": "father", "body|어머니": "mother", "body|할아버지": "grandfather", "body|할머니": "grandmother", "body|머리": "head", "body|얼굴": "face", "body|눈": "eye", "body|코": "nose", "body|입": "mouth", "body|귀": "ear", "body|손": "hand", "body|발": "foot", "body|어깨": "shoulder", "body|무릎": "knee", "home|집": "house", "home|방": "room interior", "home|마당": "yard", "home|뜰": "garden yard", "home|문": "door", "home|창": "window", "home|지붕": "roof house", "home|담": "stone wall", "home|울타리": "fence", "home|부엌": "kitchen", "home|아궁이": "traditional Korean stove", "home|구들": "ondol floor", "home|장독": "onggi jar", "home|솥": "pot cauldron", "home|가마솥": "korean cauldron", "home|그릇": "bowl dish", "home|바가지": "ladle gourd dipper", "home|숟가락": "spoon", "home|젓가락": "chopsticks", "home|칼": "knife", "home|도마": "cutting board", "home|이불": "blanket", "home|베개": "pillow", "home|빗자루": "broom", "home|수건": "towel", "home|신발": "shoes", "food|밥": "cooked rice", "food|쌀": "rice grains", "food|벼": "rice plant", "food|보리": "barley", "food|콩": "soybeans", "food|팥": "red beans", "food|깨": "sesame", "food|꿀": "honey", "food|엿": "taffy candy", "food|떡": "rice cake", "food|가래떡": "garaetteok", "food|송편": "songpyeon", "food|인절미": "injeolmi", "food|국": "soup", "food|찌개": "stew", "food|나물": "seasoned vegetables", "food|쌈": "ssam wrap", "food|고기": "meat", "food|불고기": "bulgogi", "food|비빔밥": "bibimbap", "food|김밥": "gimbap", "food|된장": "soybean paste", "food|간장": "soy sauce", "food|고추장": "gochujang", "food|우유": "milk", "food|달걀": "egg", "food|감자": "potato", "food|고구마": "sweet potato", "food|사과": "apple", "food|배": "pear fruit", "food|수박": "watermelon", "play|그네": "swing playground", "play|팽이": "spinning top toy", "play|윷": "yut sticks", "play|윷놀이": "yutnori", "play|제기": "jegichagi shuttlecock", "play|제기차기": "jegichagi", "play|딱지": "paper card toy", "play|연": "kite", "play|연날리기": "kite flying", "play|숨바꼭질": "hide and seek children", "play|술래": "tag game child", "play|공기놀이": "gonggi stones", "play|비석치기": "stone hit traditional game", "play|널뛰기": "traditional Korean seesaw", "play|씨름": "ssireum wrestling", "play|줄다리기": "tug of war", "play|탈": "mask traditional korea", "play|사물놀이": "samulnori"};
+const illustrateCats=new Set(["mind", "sound"]);
+const illustrateWords=new Set(["가다", "오다", "걷다", "뛰다", "달리다", "기다", "오르다", "내리다", "건너다", "돌다", "멈추다", "앉다", "서다", "눕다", "일어나다", "잡다", "놓다", "들다", "밀다", "당기다", "던지다", "받다", "열다", "닫다", "씻다", "닦다", "쓸다", "심다", "가꾸다", "먹다", "마시다", "웃다", "울다", "부르다", "듣다", "보다", "읽다", "쓰다", "말하다", "묻다", "대답하다", "돕다"]);
+
+let activeCat='all',limit=25,sortMode='basic';
+const $=id=>document.getElementById(id);
+$('totalCount').textContent=data.length;
+
+const mediaCache=new Map();
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      observer.unobserve(e.target);
+      loadMedia(e.target);
+    }
+  });
+},{rootMargin:'160px'});
+
+function esc(s){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;');
+}
+function catName(id){return (cats.find(c=>c.id===id)||{}).name||'전체'}
+function shouldIllustrate(x){return illustrateCats.has(x.cat)||illustrateWords.has(x.word)}
+
+function iconSvg(id){
+  const common='viewBox="0 0 64 64" width="52" height="52" xmlns="http://www.w3.org/2000/svg"';
+  const map={
+    all:`<svg ${common}><rect x="14" y="11" width="36" height="42" rx="5" fill="#F4C96E"/><rect x="20" y="16" width="24" height="32" rx="3" fill="#FFF8DE"/><path d="M24 25h16M24 31h13M24 37h15" stroke="#C89943" stroke-width="2.8" stroke-linecap="round"/><circle cx="45" cy="15" r="8" fill="#83C59B"/><path d="M42 15l2 2 4-5" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    nature:`<svg ${common}><circle cx="42" cy="20" r="10" fill="#FFD86B"/><path d="M11 46c4-13 13-20 23-20 12 0 19 9 21 20z" fill="#9BCB8A"/><path d="M12 47h43" stroke="#70A76E" stroke-width="4" stroke-linecap="round"/><path d="M19 28c3-5 7-7 11-6 5 0 7 4 9 7-3 2-7 3-11 2-4 1-7 0-9-3z" fill="#FFFFFF"/></svg>`,
+    plant:`<svg ${common}><path d="M32 51V28" stroke="#5E9B63" stroke-width="4" stroke-linecap="round"/><path d="M32 34c-9 0-14-6-15-14 9-1 15 3 17 11" fill="#8BCB79"/><path d="M33 29c2-9 8-14 17-13 0 9-5 15-16 17" fill="#6FBA6A"/><ellipse cx="32" cy="52" rx="16" ry="5" fill="#CBA86E"/></svg>`,
+    animal:`<svg ${common}><circle cx="32" cy="34" r="17" fill="#D9A66B"/><circle cx="20" cy="20" r="7" fill="#C68A51"/><circle cx="44" cy="20" r="7" fill="#C68A51"/><circle cx="26" cy="32" r="2.3" fill="#4A3B32"/><circle cx="38" cy="32" r="2.3" fill="#4A3B32"/><ellipse cx="32" cy="39" rx="4" ry="3" fill="#8F5D42"/><path d="M25 44c5 4 9 4 14 0" fill="none" stroke="#7A4F3A" stroke-width="2" stroke-linecap="round"/></svg>`,
+    body:`<svg ${common}><circle cx="32" cy="20" r="11" fill="#FFD6B2"/><path d="M18 52c2-13 7-21 14-21s12 8 14 21z" fill="#F09CAD"/><path d="M21 39l-10 8M43 39l10 8" stroke="#FFD6B2" stroke-width="6" stroke-linecap="round"/><circle cx="28" cy="20" r="1.5" fill="#463A35"/><circle cx="36" cy="20" r="1.5" fill="#463A35"/></svg>`,
+    home:`<svg ${common}><path d="M10 31l22-18 22 18" fill="#E59A75"/><rect x="15" y="29" width="34" height="25" rx="3" fill="#F6D29B"/><rect x="28" y="38" width="9" height="16" fill="#9F7054"/><rect x="19" y="34" width="7" height="7" fill="#A6D2E8"/><rect x="40" y="34" width="7" height="7" fill="#A6D2E8"/></svg>`,
+    food:`<svg ${common}><path d="M13 30h38c-2 14-8 22-19 22S15 44 13 30z" fill="#F4D07D"/><path d="M19 29c2-9 9-14 13-14 5 0 11 5 13 14" fill="#FFF4D7"/><ellipse cx="31" cy="25" rx="7" ry="5" fill="#A9CC6C"/><path d="M46 14v20M51 14v20" stroke="#8A6550" stroke-width="3" stroke-linecap="round"/></svg>`,
+    action:`<svg ${common}><circle cx="37" cy="14" r="7" fill="#FFD4AE"/><path d="M35 22l-7 14 10 6 6-13z" fill="#6EC1A4"/><path d="M29 33l-12 8M39 41l-5 12M42 28l10 7" stroke="#536B68" stroke-width="5" stroke-linecap="round"/><path d="M13 47h12" stroke="#EEA367" stroke-width="4" stroke-linecap="round"/></svg>`,
+    mind:`<svg ${common}><path d="M32 53C13 41 8 31 12 22c4-9 15-9 20-1 5-8 16-8 20 1 4 9-1 19-20 31z" fill="#F28FA9"/><circle cx="25" cy="29" r="2" fill="#8B5362"/><circle cx="39" cy="29" r="2" fill="#8B5362"/><path d="M25 36c5 4 9 4 14 0" fill="none" stroke="#8B5362" stroke-width="2" stroke-linecap="round"/></svg>`,
+    sound:`<svg ${common}><path d="M17 40h8l14 10V14L25 24h-8z" fill="#F0A866"/><path d="M44 25c5 3 5 11 0 14M49 20c9 6 9 19 0 25" fill="none" stroke="#6F8DC5" stroke-width="3" stroke-linecap="round"/><circle cx="18" cy="16" r="4" fill="#FFD36B"/></svg>`,
+    play:`<svg ${common}><path d="M13 18l18-8 8 18-18 8z" fill="#89B8EB"/><path d="M31 10l16 15-8 3" fill="#F3B26D"/><path d="M21 36c8 6 14 11 18 18" fill="none" stroke="#7660A3" stroke-width="2.5" stroke-linecap="round"/><circle cx="42" cy="45" r="4" fill="#F18FA9"/></svg>`
+  };
+  return map[id]||map.all;
+}
+
+function renderCats(){
+  const allCard=`<button class="cat ${activeCat==='all'?'on':''}" data-cat="all"><span class="iconShell">${iconSvg('all')}</span><span class="catLabel">전체</span></button>`;
+  $('cats').innerHTML=allCard+cats.map(c=>
+    `<button class="cat ${activeCat===c.id?'on':''}" data-cat="${c.id}"><span class="iconShell">${iconSvg(c.id)}</span><span class="catLabel">${esc(c.name)}</span></button>`
+  ).join('');
+  document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{
+    activeCat=b.dataset.cat;
+    limit=25;
+    renderCats();
+    renderResults();
+  });
+}
+
+function filtered(){
+  const q=$('q').value.trim().toLowerCase();
+  let list=data.filter(x=>
+    (activeCat==='all'||x.cat===activeCat)&&
+    (!q||(x.word+' '+x.meaning).toLowerCase().includes(q))
+  );
+  if(sortMode==='word')list=[...list].sort((a,b)=>a.word.localeCompare(b.word,'ko'));
+  if(sortMode==='reverse')list=[...list].sort((a,b)=>b.word.localeCompare(a.word,'ko'));
+  return list;
+}
+
+function cardHtml(x){
+  return `<article class="card">
+    <div class="thumb" data-media="${x.id}" data-word="${esc(x.word)}" data-cat="${x.cat}" data-meaning="${esc(x.meaning)}">
+      <div class="thumbLoading">🖼️<br>자료를 불러오는 중이에요.</div>
+      <div class="wordTag">${esc(x.word)}</div>
+    </div>
+    <div class="cardBody">
+      <div class="wordRow"><h3>${esc(x.word)}</h3>${shouldIllustrate(x)?'<span class="badge alt">장면 삽화</span>':'<span class="badge">고유어</span>'}</div>
+      <div class="meta">${esc(catName(x.cat))}</div>
+      <div class="meaning">${esc(x.meaning)}</div>
+      <button class="detailBtn" data-open="${x.id}">크게 보기</button>
+    </div>
+  </article>`;
+}
+
+function renderResults(){
+  const all=filtered(),list=all.slice(0,limit);
+  $('visibleCount').textContent=all.length+'개';
+  $('grid').innerHTML=list.length?list.map(cardHtml).join(''):'<div class="empty">찾는 고유어가 없습니다.</div>';
+  $('moreBtn').style.display=all.length>limit?'block':'none';
+  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openDetail(+b.dataset.open));
+  document.querySelectorAll('[data-media]').forEach(el=>observer.observe(el));
+}
+
+function svgData(svg){return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg)}
+function colors(cat){
+  const m={
+    nature:['#dff1ff','#8bc7eb','#2b6b94'],
+    plant:['#e3f5df','#92cd86','#4b7b3f'],
+    animal:['#fff0dc','#d6a675','#81532f'],
+    body:['#ffe9df','#e7ad8b','#8a5941'],
+    home:['#f0ebff','#b8a9e0','#61528e'],
+    food:['#fff4d9','#efc46d','#8d682a'],
+    action:['#e3f6ef','#8ed0ba','#317969'],
+    mind:['#ffeaf1','#f1abc1','#9b5877'],
+    sound:['#fff1df','#ffc976','#a36a25'],
+    play:['#eaf0ff','#9eb7ef','#4f68a0']
+  };
+  return m[cat]||['#eef4f1','#b5c9c1','#47625a'];
+}
+function makeIllustration(x){
+  const [a,b,d]=colors(x.cat);
+  const m=x.meaning.length>25?x.meaning.slice(0,25)+'…':x.meaning;
+  const icon=x.cat==='mind'?'💛':x.cat==='sound'?'✨':x.cat==='action'?'👣':'🎈';
+  return svgData(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="560">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
+  <rect width="800" height="560" fill="url(#g)"/>
+  <circle cx="690" cy="95" r="95" fill="#ffffff40"/>
+  <circle cx="125" cy="450" r="130" fill="#ffffff28"/>
+  <text x="65" y="175" font-size="70" font-family="sans-serif" font-weight="800" fill="${d}">${x.word}</text>
+  <text x="68" y="235" font-size="28" font-family="sans-serif" fill="#344742">${icon} ${catName(x.cat)}</text>
+  <rect x="58" y="292" width="684" height="150" rx="24" fill="#ffffffd7"/>
+  <text x="86" y="350" font-size="28" font-family="sans-serif" font-weight="700" fill="#354640">${m}</text>
+  <text x="86" y="398" font-size="22" font-family="sans-serif" fill="#51635e">뜻에 맞는 장면 삽화로 표현한 낱말입니다.</text>
+  </svg>`);
+}
+async function fetchJson(url){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),7000);
+  try{
+    const r=await fetch(url,{signal:c.signal});
+    if(!r.ok)return null;
+    return await r.json();
+  }catch(e){return null}
+  finally{clearTimeout(t)}
+}
+function pickThumb(obj){
+  if(!obj||!obj.query||!obj.query.pages)return'';
+  for(const p of Object.values(obj.query.pages)){
+    if(p.thumbnail?.source)return p.thumbnail.source;
+    if(p.imageinfo?.[0])return p.imageinfo[0].thumburl||p.imageinfo[0].url||'';
+  }
+  return'';
+}
+async function commons(q){
+  return pickThumb(await fetchJson('https://commons.wikimedia.org/w/api.php?origin=*&action=query&format=json&generator=search&gsrnamespace=6&gsrsearch='+encodeURIComponent(q)+'&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=640'));
+}
+async function kowiki(q){
+  return pickThumb(await fetchJson('https://ko.wikipedia.org/w/api.php?origin=*&action=query&format=json&generator=search&gsrsearch='+encodeURIComponent(q)+'&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=640'));
+}
+async function resolveMedia(x){
+  const key=x.cat+'|'+x.word;
+  if(mediaCache.has(key))return mediaCache.get(key);
+  if(shouldIllustrate(x)){
+    const r={type:'illustration',src:makeIllustration(x)};
+    mediaCache.set(key,r);
+    return r;
+  }
+  const direct=photoQueryMap[key]||photoQueryMap[x.word];
+  let src='';
+  for(const q of [direct,x.word+' '+catName(x.cat),x.word].filter(Boolean)){
+    src=await commons(q);if(src)break;
+    src=await kowiki(q);if(src)break;
+  }
+  const r=src?{type:'photo',src}:{type:'illustration',src:makeIllustration(x)};
+  mediaCache.set(key,r);
+  return r;
+}
+async function loadMedia(el){
+  const x={word:el.dataset.word,cat:el.dataset.cat,meaning:el.dataset.meaning};
+  const r=await resolveMedia(x);
+  if(!el.isConnected)return;
+  el.innerHTML=`<img alt="${esc(x.word)} 자료" loading="lazy" referrerpolicy="no-referrer" src="${r.src}"><div class="wordTag">${esc(x.word)}</div>`;
+}
+async function openDetail(id){
+  const x=data.find(v=>v.id===id),r=await resolveMedia(x);
+  $('modalTitle').textContent=x.word+' 상세보기';
+  $('modalWord').textContent=x.word;
+  $('modalMeta').textContent=catName(x.cat);
+  $('modalMeaning').textContent=x.meaning;
+  $('modalImg').src=r.src;
+  $('modalImg').alt=x.word+' 자료';
+  $('modalBadge').className='badge'+(r.type==='illustration'?' alt':'');
+  $('modalBadge').textContent=r.type==='illustration'?'장면 삽화':'고유어';
+  $('modalSource').textContent=r.type==='illustration'?'사진보다 뜻 설명이 중요한 낱말이라 장면형 삽화로 구성했습니다.':'위키미디어 공용 또는 위키백과의 공개 이미지를 검색해 표시합니다.';
+  $('modal').classList.add('on');
+}
+
+$('searchBtn').onclick=()=>{limit=25;renderResults()};
+$('q').addEventListener('input',()=>{limit=25;renderResults()});
+$('sort').onchange=e=>{sortMode=e.target.value;limit=25;renderResults()};
+$('moreBtn').onclick=()=>{limit+=25;renderResults()};
+$('closeBtn').onclick=()=>$('modal').classList.remove('on');
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('on')});
+
+renderCats();
+renderResults();
+</script>
+</body>
+</html>
