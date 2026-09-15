@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#79aeb3">
+<title>상권쌤 국어놀이터</title>
+<style>
+:root{
+  --bg:#f8faf8;
+  --paper:#fff;
+  --line:#e6ece8;
+  --text:#26332d;
+  --muted:#73807a;
+  --green:#5aa46c;
+  --green-deep:#3f7e57;
+  --mint:#eef7f0;
+  --sky:#edf6ff;
+  --lav:#f3efff;
+  --peach:#fff0e6;
+  --yellow:#fff8e5;
+  --shadow:0 14px 34px rgba(39,58,49,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,#eef8fb 0px,#f6fbf7 170px,#fbfaf6 100%);
+}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid #e7edeb}
+.topinner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:46px;height:46px;border-radius:14px;background:#ebf5ef;display:grid;place-items:center;box-shadow:inset 0 0 0 1px #dfeadf}
+.brand .mark svg{width:32px;height:32px}
+.brandText small{display:block;font-size:11px;font-weight:900;color:#83918a;letter-spacing:.02em}
+.brandText strong{display:block;font-size:25px;letter-spacing:-.7px;font-weight:1000}
+.topActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topLink{padding:10px 13px;border-radius:13px;background:#fff;color:#68756f;font-size:13px;font-weight:1000;border:1px solid #e4e9e6;transition:.15s}
+.topLink:hover{background:#f6faf7;color:#4d6f5b;border-color:#d9e6dc}
+
+
+
+
+
+
+
+.hero{padding:34px 0 18px}
+.heroBox{position:relative;border-radius:34px;border:1px solid #ebede5;background:linear-gradient(135deg,#faf4e4 0%,#fefdfa 33%,#eff9fd 100%);box-shadow:var(--shadow);overflow:hidden;padding:30px;display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:22px;align-items:center}
+.heroBox:before{content:'';position:absolute;left:-40px;top:-55px;width:190px;height:190px;border-radius:50%;background:rgba(255,245,210,.72)}
+.heroBox:after{content:'';position:absolute;right:-50px;bottom:-70px;width:220px;height:220px;border-radius:50%;background:rgba(222,242,239,.58)}
+.heroText,.heroArt{position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;background:#eef6ef;border:1px solid #dceadc;color:#62836d;font-size:12px;font-weight:1000}
+.heroTitle{margin:15px 0 12px;font-size:46px;line-height:1.12;letter-spacing:-1.8px}
+.heroTitle .accent{color:#4fa08e}
+.heroDesc{margin:0;color:#72817a;font-size:15px;line-height:1.72}
+.heroSearch{margin-top:21px;display:flex;gap:10px;max-width:590px;padding:7px;background:#fff;border-radius:19px;border:2px solid #d9e7ed;box-shadow:0 12px 25px rgba(54,83,86,.06)}
+.heroSearch input{flex:1;min-width:0;padding:12px 14px;border:0;outline:0;background:transparent;font-size:15px}
+.heroSearch button{border:0;border-radius:14px;background:#5ca465;color:#fff;font-weight:1000;padding:0 18px}
+.heroHints{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.heroHints span{padding:6px 10px;border-radius:999px;border:1px solid #edf1ea;background:#ffffffbc;color:#7f8984;font-size:12px;font-weight:900}
+.heroArt{height:302px}
+.heroArt svg{width:100%;height:100%;display:block}
+.section{padding:16px 0}
+.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sectionHead h2{margin:0;font-size:25px;letter-spacing:-.8px}
+.sectionHead p{margin:6px 0 0;color:#829089;font-size:13px}
+.pills{display:flex;flex-wrap:wrap;gap:10px}
+.pill{padding:11px 15px;border:1px solid #e8edea;border-radius:17px;background:#fff;color:#66756d;font-weight:1000;font-size:14px}
+.pill.active{background:#ebf6ee;border-color:#dbeade;color:#4d805a}
+.pill:nth-child(1){background:#e8f4ec}.pill:nth-child(2){background:#eef5fd}.pill:nth-child(3){background:#fff2ea}.pill:nth-child(4){background:#f2eefc}.pill:nth-child(5){background:#eef8f3}.pill:nth-child(6){background:#fff8e7}.pill:nth-child(7){background:#f6effb}
+.feature{margin-top:8px;border-radius:28px;padding:24px 26px;color:#fff;background:linear-gradient(135deg,#77a98a 0%,#709888 42%,#7994bf 100%);display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:center;box-shadow:0 16px 34px rgba(61,77,62,.14)}
+.feature small{font-size:12px;font-weight:1000;opacity:.84}.feature h3{font-size:29px;margin:7px 0 8px;letter-spacing:-1px}.feature p{margin:0;font-size:14px;line-height:1.67;opacity:.96}.featureBtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.featureBtns a{padding:10px 13px;border-radius:12px;background:#fff;color:#577068;font-size:12px;font-weight:1000}
+.featurePreview{height:150px;display:flex;align-items:center;justify-content:center}
+.featurePreview .miniFrame{width:210px;height:132px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 25px rgba(0,0,0,.12);transform:rotate(4deg)}
+.featurePreview iframe{width:980px;height:620px;border:0;transform:scale(.214);transform-origin:0 0;pointer-events:none;background:#fff}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px 0 16px}.count{font-size:13px;font-weight:900;color:#75817b}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{border-radius:25px;background:#fff;border:1px solid #e7ece8;box-shadow:0 9px 26px rgba(55,68,59,.07);overflow:hidden;display:flex;flex-direction:column;transition:.18s}
+.card:hover{transform:translateY(-3px);box-shadow:0 15px 32px rgba(55,68,59,.12)}
+.thumb{position:relative;height:214px;background:#eef4f2;overflow:hidden;border-bottom:1px solid #edf0ee}
+.thumb .frameWrap{position:absolute;inset:0;background:#f1f4f4;overflow:hidden}
+.thumb iframe{width:1440px;height:900px;border:0;transform:scale(.255);transform-origin:0 0;pointer-events:none;background:#fff}.thumbLink{position:absolute;inset:0;z-index:1}.urlHint{font-size:10px;color:#98a39d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+.thumb svg{width:100%;height:100%;display:block}
+.fileTag{position:absolute;right:12px;bottom:12px;z-index:3;padding:5px 8px;border-radius:8px;background:rgba(30,42,36,.72);color:#fff;font-size:10px;font-weight:900;backdrop-filter:blur(3px)}
+.state{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #eef2ee;color:#5a6861;font-size:11px;font-weight:1000;z-index:2}
+.cardBody{padding:16px 16px 17px;display:flex;flex-direction:column;flex:1}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}.chip{padding:6px 9px;border-radius:999px;background:#f2f4f2;color:#748078;font-size:11px;font-weight:900;line-height:1.25}
+.card h3{margin:0;font-size:22px;letter-spacing:-.55px}.card p{margin:9px 0 16px;min-height:40px;color:#79867f;font-size:13px;line-height:1.63}
+.cardFoot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}.sub{font-size:12px;color:#91a09a;font-weight:800}.action{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:12px;background:#edf6ee;border:1px solid #dfeadf;color:#5c8566;font-size:12px;font-weight:1000}.action.disabled{pointer-events:none;background:#f4f4f1;border-color:#ededea;color:#b4b4ac}
+
+.footer{padding:28px 0 44px;text-align:center;color:#909a95;font-size:12px}
+@media(max-width:1060px){.heroBox{grid-template-columns:1fr}.feature{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.notice{grid-template-columns:1fr}}
+@media(max-width:760px){.topActions{gap:5px}.topLink{padding:9px 10px;font-size:11px}.wrap{padding:0 12px}.topLink,.brandText strong{font-size:21px}.brandText small{font-size:10px}.topinner{height:68px}.heroBox{padding:20px}.heroTitle{font-size:36px}.heroArt{height:250px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topinner">
+    <a class="brand" href="#home">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M12 18c12-8 21-7 29 0v34c-8-7-17-8-29-2z" fill="#89af82"/><path d="M53 18c-12-8-21-7-29 0v34c8-7 17-8 29-2z" fill="#b3cfa7"/><path d="M32 18v34" stroke="#fff" stroke-width="3"/></svg></span>
+      <span class="brandText"><small>수업에 바로 쓰는 국어 도움 자료 모음</small><strong>상권쌤 국어놀이터</strong></span>
+    </a>
+    <div class="topActions">
+      <a class="topLink" href="https://sangkwon-ssam.tistory.com/" target="_blank" rel="noopener noreferrer">홈페이지</a>
+      <a class="topLink" href="https://ele.douclass.com/" target="_blank" rel="noopener noreferrer">두클래스</a>
+    </div>
+
+  </div>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <div class="wrap">
+      <div class="heroBox">
+        <div class="heroText">
+          <span class="badge">🌿 상권쌤 X 두클래스</span>
+          <h1 class="heroTitle">교실에서 바로 여는<br><span class="accent">국어 도움 자료실</span></h1>
+          <p class="heroDesc">어휘, 문법, 읽기, 쓰기, 독서 활동을 한곳에 모았습니다.<br>학생과 바로 활용할 수 있는 인터랙티브 국어 자료를 카드형으로 정리한 포털 메인 페이지입니다.</p>
+        </div>
+        <div class="heroArt" aria-hidden="true">
+          <svg viewBox="0 0 430 302">
+            <defs>
+              <linearGradient id="bgcard" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#f5f9f8"/></linearGradient>
+              <linearGradient id="screen" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#86c0b0"/><stop offset="1" stop-color="#7eb4d5"/></linearGradient>
+            </defs>
+            <circle cx="71" cy="48" r="22" fill="#ffedb0"/>
+            <circle cx="378" cy="253" r="65" fill="#e8f4f3"/>
+            <rect x="161" y="30" width="220" height="156" rx="26" fill="#dfeaf2"/>
+            <rect x="177" y="46" width="188" height="124" rx="18" fill="url(#screen)"/>
+            <rect x="196" y="67" width="84" height="16" rx="8" fill="#ffffffca"/>
+            <rect x="196" y="93" width="137" height="12" rx="6" fill="#ffffffa9"/>
+            <rect x="196" y="112" width="110" height="12" rx="6" fill="#ffffffa9"/>
+            <rect x="196" y="136" width="61" height="18" rx="9" fill="#fff4dc"/>
+            <rect x="22" y="113" width="165" height="115" rx="26" fill="url(#bgcard)" stroke="#e8eeea"/>
+            <rect x="38" y="130" width="60" height="48" rx="15" fill="#ebf6ef"/>
+            <path d="M48 136c11-5 21-5 30 0v27c-9-5-19-5-30 0z" fill="#6ea279"/>
+            <path d="M84 136c-9-5-19-5-30 0v27c11-5 21-5 30 0z" fill="#b8d7b8"/>
+            
+            
+            <rect x="109" y="192" width="61" height="19" rx="9.5" fill="#eef7ef"/>
+            <rect x="278" y="183" width="135" height="86" rx="24" fill="#fff" stroke="#ebefec"/>
+            <circle cx="316" cy="221" r="25" fill="#fff0e3"/>
+            <circle cx="316" cy="221" r="15" fill="#f8b66c"/>
+            <path d="M309 221h14M316 214v14" stroke="#fff9ef" stroke-width="3.5" stroke-linecap="round"/>
+            
+            
+            <g transform="translate(106 40)">
+              <path d="M0 10c13-8 27-5 38 5C26 23 12 21 0 10z" fill="#7dbd8d"/>
+              <path d="M6 15c12 6 17 18 16 33-16-4-23-14-16-33z" fill="#9ccc9f"/>
+              <path d="M8 15c12 12 19 20 28 34" fill="none" stroke="#5d9669" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <circle cx="377" cy="40" r="13" fill="#fff"/>
+            <circle cx="403" cy="60" r="13" fill="#fff7df"/>
+            <circle cx="394" cy="92" r="14" fill="#efeafb"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="sectionHead"><div><h2>영역별로 찾아보기</h2><p>국어 수업 목표에 맞는 자료를 빠르게 골라 보세요.</p></div></div>
+      <div class="pills" id="categoryRow"></div>
+    </div>
+  </section>
+
+  <section class="section" id="recommended">
+    <div class="wrap">
+      <div class="feature">
+        <div>
+          <small>오늘의 추천 자료</small>
+          <h3>고유어 탐험 사전</h3>
+          <p>학생들이 낱말을 직접 검색하고 사진과 뜻을 보며 생활 속 고유어를 탐색할 수 있는 자료입니다. 어휘 수업, 발표 준비, 간단한 탐구 활동에 잘 어울립니다.</p>
+          <div class="featureBtns"><a href="https://tkdrnjs7.github.io/sangkwonSSAM/book4.html" target="_blank" rel="noopener noreferrer">자료 바로 열기</a><a href="#materials">다른 자료 보기</a></div>
+        </div>
+        <div class="featurePreview"><div class="miniFrame"><iframe src="https://tkdrnjs7.github.io/sangkwonSSAM/book4.html" title="고유어 탐험 사전 실제 사이트 미리보기" loading="lazy"></iframe></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="materials">
+    <div class="wrap">
+      <div class="controls">
+        <div class="sectionHead" style="margin:0"><div><h2>자료 모음</h2></div></div>
+        <div class="count" id="countBadge"></div>
+      </div>
+      <div class="grid" id="cards"></div>
+    </div>
+  </section>
+</main>
+<footer class="footer">상권쌤 X 두클래스</footer>
+<script>
+const SITE_BASE='https://tkdrnjs7.github.io/sangkwonSSAM/';
+
+const materials = [
+  {
+    id:1,
+    title:'디지털 매체로 책 정보 찾기',
+    cat:'독서',
+    grade:'5학년 2학기 독서단원',
+    desc:'디지털 매체를 활용해 책의 제목, 표지, 소개 등 다양한 정보를 찾아보는 국어 활동입니다.',
+    page:'book.html',
+    status:'바로 사용'
+  },
+  {
+    id:2,
+    title:'전자도서관 체험',
+    cat:'독서',
+    grade:'5학년 2학기 독서단원',
+    desc:'전자도서관을 직접 둘러보며 책을 검색하고 필요한 정보를 살펴보는 체험형 국어 활동입니다.',
+    page:'book3.html',
+    status:'바로 사용'
+  },
+  {
+    id:3,
+    title:'여행 가방을 부탁해!',
+    cat:'독서',
+    grade:'5학년 2학기 독서단원',
+    desc:'여행 상황에 필요한 물건을 제한된 가방 칸 안에서 선택하고 선택 이유를 설명하는 의사결정 활동입니다.',
+    page:'travel.html',
+    status:'바로 사용'
+  },
+  {
+    id:4,
+    title:'방언 탐정',
+    cat:'어휘·문법',
+    grade:'5학년 2학기 3단원',
+    desc:'뜻과 상황을 단서로 여러 지역의 방언을 추리하며 알아보는 게임형 국어 활동입니다.',
+    page:'dialect-detective.html',
+    status:'바로 사용'
+  },
+  {
+    id:5,
+    title:'나만의 방언 지도',
+    cat:'어휘·문법',
+    grade:'5학년 2학기 3단원',
+    desc:'지역별 방언을 직접 찾아 등록하고 자신만의 방언 지도를 완성하는 탐구형 활동입니다.',
+    page:'find-map.html',
+    status:'바로 사용'
+  },
+  {
+    id:6,
+    title:'고유어 탐험사전',
+    cat:'어휘·문법',
+    grade:'6학년 2학기 4단원',
+    desc:'여러 고유어를 검색하고 뜻과 쓰임을 살펴보며 우리말 어휘를 탐색하는 인터랙티브 사전입니다.',
+    page:'book4.html',
+    status:'바로 사용'
+  },
+  {
+    id:7,
+    title:'스케치 탐정단',
+    cat:'듣기·말하기',
+    grade:'국어 및 창체 수업',
+    desc:'그림을 그리고 설명하며 정답을 맞히는 협동형 활동으로 말하기·듣기·표현력을 함께 기릅니다.',
+    page:'sketch.html',
+    status:'바로 사용'
+  }
+];
+
+const categories=['전체','독서','어휘·문법','듣기·말하기'];
+const BASE_URL='https://tkdrnjs7.github.io/sangkwonSSAM/';
+let activeCat='전체';
+const $=id=>document.getElementById(id);
+const fullUrl=m=>m.page?pageUrl(m.page):'#';
+
+function artSVG(key){
+  const map={
+    summary:`<svg viewBox="0 0 600 400"><rect width="600" height="400" fill="#edf6f2"/><circle cx="516" cy="79" r="72" fill="#fff1c8"/><rect x="77" y="68" width="446" height="263" rx="28" fill="#fff" stroke="#e8eeea"/><rect x="112" y="100" width="140" height="18" rx="9" fill="#8ec49a"/><rect x="112" y="135" width="345" height="14" rx="7" fill="#ddebe1"/><rect x="112" y="159" width="286" height="14" rx="7" fill="#ddebe1"/><rect x="112" y="205" width="108" height="72" rx="18" fill="#d8ebf8"/><path d="M133 230h66M133 249h45" stroke="#6d96a8" stroke-width="8" stroke-linecap="round"/><rect x="240" y="203" width="218" height="26" rx="13" fill="#ffe6c6"/><rect x="240" y="245" width="155" height="22" rx="11" fill="#ecf6ef"/></svg>`,
+    writing:`<svg viewBox="0 0 600 400"><rect width="600" height="400" fill="#f8efe9"/><rect x="97" y="63" width="409" height="273" rx="28" fill="#fff" stroke="#ece6df"/><rect x="132" y="100" width="159" height="18" rx="9" fill="#f2c2ca"/><path d="M135 151h326M135 186h289M135 221h235" stroke="#e8ddd7" stroke-width="12" stroke-linecap="round"/><path d="M351 265l95-95 30 30-95 95-47 12z" fill="#94b6cf"/><path d="M444 170l31 31 22-23c8-8 8-20 0-28-8-8-20-8-28 0z" fill="#64879c"/><circle cx="139" cy="272" r="38" fill="#ffe6c5"/><path d="M127 273l9 11 18-24" fill="none" stroke="#d28f56" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    reading:`<svg viewBox="0 0 600 400"><rect width="600" height="400" fill="#eef1fb"/><circle cx="113" cy="88" r="58" fill="#fff3c8"/><rect x="129" y="93" width="347" height="208" rx="30" fill="#fff" stroke="#e9eaf5"/><path d="M177 123c34-20 69-20 103 0v124c-34-20-69-20-103 0z" fill="#8bb6a5"/><path d="M383 123c-34-20-69-20-103 0v124c34-20 69-20 103 0z" fill="#bed8bf"/><path d="M280 123v124" stroke="#fff" stroke-width="5"/><path d="M198 158h53M198 181h41M301 158h57M301 181h43" stroke="#5d7b68" stroke-width="8" stroke-linecap="round"/></svg>`,
+    talk:`<svg viewBox="0 0 600 400"><rect width="600" height="400" fill="#eef8f7"/><rect x="83" y="136" width="202" height="123" rx="37" fill="#fff"/><rect x="282" y="92" width="233" height="139" rx="42" fill="#d7e8fb"/><circle cx="143" cy="190" r="11" fill="#7ca188"/><circle cx="186" cy="190" r="11" fill="#7ca188"/><circle cx="229" cy="190" r="11" fill="#7ca188"/><circle cx="341" cy="147" r="14" fill="#6e9ecd"/><circle cx="391" cy="147" r="14" fill="#6e9ecd"/><circle cx="440" cy="147" r="14" fill="#6e9ecd"/></svg>`,
+    collect:`<svg viewBox="0 0 600 400"><rect width="600" height="400" fill="#f8f4e9"/><rect x="125" y="58" width="217" height="288" rx="24" fill="#fffaf0"/><rect x="154" y="87" width="157" height="14" rx="7" fill="#b6d8b2"/><path d="M154 128h157M154 165h139M154 202h113M154 239h132" stroke="#ddd9c8" stroke-width="10" stroke-linecap="round"/><rect x="351" y="92" width="130" height="91" rx="19" fill="#edf5fb"/><rect x="351" y="197" width="130" height="91" rx="19" fill="#fcebd7"/></svg>`
+  };
+  return map[key]||map.collect;
+}
+function renderPills(){
+  $('categoryRow').innerHTML=categories.map(cat=>`<button class="pill ${activeCat===cat?'active':''}" data-cat="${cat}">${cat}</button>`).join('');
+  document.querySelectorAll('[data-cat]').forEach(btn=>btn.onclick=()=>{activeCat=btn.dataset.cat;renderPills();renderCards();});
+}
+function categoryPass(m){if(activeCat==='전체')return true; return m.cat===activeCat;}
+function pageUrl(page){return BASE_URL+page.split('/').map(encodeURIComponent).join('/');}
+function thumbContent(item){const url=pageUrl(item.page); return `<div class="frameWrap"><iframe src="${url}" title="${item.title} 메인 화면 미리보기" loading="lazy"></iframe></div>`;}
+function renderCards(){
+  const list=materials.filter(m=>categoryPass(m));
+  $('countBadge').textContent=`${list.length}개 자료`;
+  $('cards').innerHTML=list.length?list.map(item=>{
+    const url=fullUrl(item);
+    return `<article class="card"><div class="thumb">${thumbContent(item)}<span class="state">${item.status}</span></div><div class="cardBody"><div class="chips"><span class="chip">${item.cat}</span><span class="chip">${item.grade}</span></div><h3>${item.title}</h3><p>${item.desc}</p><div class="cardFoot"><span class="urlHint">${item.page}</span><a class="action" href="${url}" target="_blank" rel="noopener noreferrer">새 창에서 열기</a></div></div></article>`;
+  }).join(''):`<div class="panel" style="grid-column:1/-1;text-align:center">조건에 맞는 자료가 없습니다.</div>`;
+}
+renderPills();renderCards();
+</script>
+</body>
+</html>
