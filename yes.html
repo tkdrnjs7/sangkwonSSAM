@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>나의 다짐문 만들기</title>
+<style>
+:root{
+  --bg:#f7fbf8;--paper:#fff;--ink:#2f3d36;--muted:#7b8a82;--green:#5aa373;
+  --line:#e4ece6;--soft:#eef7f0;--peach:#fff0e6;--yellow:#fff7d9;--lav:#f1edff;--sky:#eaf5ff;
+  --shadow:0 16px 36px rgba(48,70,58,.10)
+}
+*{box-sizing:border-box}html,body{margin:0}body{background:linear-gradient(180deg,#eef9f4 0,#f9fbf8 42%,#fffaf2 100%);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}.wrap{max-width:1180px;margin:auto;padding:22px}
+.hero{background:linear-gradient(135deg,#fff7dc,#f6fbf8 50%,#eaf6ff);border:1px solid #e9eee9;border-radius:30px;padding:27px 30px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;overflow:hidden}
+.hero h1{font-size:43px;line-height:1.08;margin:6px 0 10px;letter-spacing:-1.5px}.hero p{margin:0;color:var(--muted);line-height:1.7}.tag{display:inline-flex;padding:7px 11px;border-radius:999px;background:#eef7ef;color:#4f7e5d;font-size:12px;font-weight:900;border:1px solid #dceadc}
+.heroArt{height:210px;position:relative}.paper{position:absolute;left:40px;top:16px;width:295px;padding:20px 23px;background:#fff;border:1px solid #e7ece8;border-radius:18px;box-shadow:0 16px 30px #2d483511;transform:rotate(-2deg)}.paper b{font-size:20px}.paper .line{height:8px;border-radius:9px;background:#e7efe9;margin-top:12px}.paper .line:nth-child(3){width:86%}.paper .line:nth-child(4){width:72%}.paper .leaf{position:absolute;right:-18px;bottom:-24px;font-size:48px;transform:rotate(11deg)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.step{padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:16px;font-size:13px;font-weight:900;color:#75827b}.step.on{background:#edf7f0;color:#4d805a;border-color:#d9eadc}
+.layout{display:grid;grid-template-columns:1.03fr .97fr;gap:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 28px rgba(43,58,49,.07);padding:22px}.panel h2{font-size:23px;margin:0 0 14px;letter-spacing:-.6px}
+.sectionBox{border:1px solid #e5ece7;background:#fbfdfb;border-radius:18px;padding:16px;margin-bottom:14px}.sectionTitle{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:1000;margin-bottom:10px}.num{width:28px;height:28px;border-radius:9px;background:#eaf6ed;color:#4f815d;display:grid;place-items:center;font-size:13px}.guide{font-size:12px;color:#87938d;line-height:1.55;margin:-3px 0 10px}
+.field{margin-bottom:12px}.field label{display:block;font-size:13px;font-weight:900;margin-bottom:7px;color:#55645d}.input,.textarea{width:100%;border:1.5px solid #dfe8e2;border-radius:14px;padding:12px 13px;background:#fff;outline:none}.textarea{min-height:82px;resize:vertical;line-height:1.65}.input:focus,.textarea:focus{border-color:#83b994;box-shadow:0 0 0 4px #83b99418}
+.promiseRows{display:grid;gap:9px}.promiseRow{display:grid;grid-template-columns:58px 1fr 38px;gap:8px;align-items:center}.one{height:44px;border-radius:12px;background:#edf7ef;color:#4d7b5a;font-weight:1000;display:grid;place-items:center}.remove{height:38px;border:0;border-radius:10px;background:#f7f0ed;color:#a26e5e;font-weight:1000}.remove:disabled{opacity:.35;cursor:default}.addBtn{border:1px dashed #bcd2c3;background:#f7fbf8;color:#5a7d65;border-radius:12px;padding:9px 12px;font-weight:900;margin-top:10px}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.quick button{border:1px solid #dde8e0;background:#f6fbf7;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:#607268}.quick button:hover{background:#eaf6ed}
+.themeRow,.stickerRow{display:flex;gap:8px;flex-wrap:wrap}.themeBtn,.stickerBtn{border:1px solid #e1e7e3;border-radius:12px;background:#fff;padding:9px 12px;font-size:12px;font-weight:900}.themeBtn.on,.stickerBtn.on{outline:3px solid #8fbea026}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{border:0;border-radius:13px;padding:11px 14px;font-weight:1000}.primary{background:#5da573;color:#fff}.soft{background:#edf6ef;color:#577865;border:1px solid #dfeadf}.warn{background:#fff1ea;color:#9c6756;border:1px solid #f0ddd5}
+.cardWrap{display:flex;justify-content:center;align-items:flex-start;min-height:590px;background:linear-gradient(135deg,#f5faf6,#fffaf0);border-radius:20px;padding:18px}.promiseCard{width:min(100%,450px);min-height:545px;border-radius:28px;padding:28px;background:linear-gradient(160deg,#fff,#f6fbf7);border:3px solid #dceadf;box-shadow:0 18px 38px rgba(50,68,57,.12);position:relative;overflow:hidden}.promiseCard.theme-peach{background:linear-gradient(160deg,#fffaf7,#fff0e6);border-color:#f4d5c6}.promiseCard.theme-lav{background:linear-gradient(160deg,#fff,#f2edff);border-color:#ddd3ff}.promiseCard.theme-sky{background:linear-gradient(160deg,#fff,#eaf5ff);border-color:#cde5f8}.promiseCard.theme-yellow{background:linear-gradient(160deg,#fffdf7,#fff7d9);border-color:#f0e0a7}.cardTop{display:flex;justify-content:space-between;align-items:center}.cardBadge{font-size:12px;font-weight:1000;color:#5c8467;background:#edf7ef;border-radius:999px;padding:7px 10px}.emoji{font-size:38px}.cardTitle{text-align:center;margin:23px 0 4px;font-size:30px;letter-spacing:-1px}.nameLine{text-align:center;color:#738178;font-weight:900;font-size:13px;margin-bottom:24px}.pledgeBlock{background:#ffffffc9;border:1px solid #e4ece6;border-radius:18px;padding:19px 20px;line-height:1.75}.startView,.endView{font-size:16px;font-weight:800;white-space:pre-wrap}.listView{display:grid;gap:10px;margin:16px 0;padding:14px 0;border-top:1px dashed #cfdbd3;border-bottom:1px dashed #cfdbd3}.pledgeLine{display:grid;grid-template-columns:50px 1fr;gap:8px;font-size:17px;line-height:1.65;font-weight:900}.pledgeLine b{color:#4f815d}.signature{margin-top:22px;padding-top:18px;border-top:1px dashed #cfdbd3;text-align:center;color:#46584e;font-weight:900;line-height:1.9}.signatureDate{font-size:15px}.signatureName{font-size:16px}.toMe{margin-top:18px;padding-top:14px;border-top:1px dashed #cfdad3;color:#5e7167;line-height:1.6;font-size:14px}.decor{position:absolute;opacity:.17;font-size:76px}.decor.oneD{right:-16px;top:120px}.decor.twoD{left:-18px;bottom:35px}
+
+.topicRow{display:flex;gap:8px;flex-wrap:wrap}.topicBtn{border:1px solid #dfe8e2;background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;color:#607268}.topicBtn.on{background:#eaf6ed;border-color:#bcd8c4;color:#4d7b5a;box-shadow:0 0 0 3px #8fbea01f}.exampleToggle{border:0;background:#f0f6f2;color:#5a7865;border-radius:10px;padding:7px 10px;font-size:12px;font-weight:900;margin-top:8px}.exampleBox{display:none;margin-top:9px;padding:11px 12px;border-radius:12px;background:#fff8e8;border:1px solid #efe1b8;color:#6e633e;font-size:12px;line-height:1.65}.exampleBox.show{display:block}.checkBox{display:none;margin-top:12px;border-radius:16px;padding:13px 14px;background:#f7fbf8;border:1px solid #dfeae2}.checkBox.show{display:block}.checkItem{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.55;margin:5px 0}.checkItem strong{min-width:22px}.modal{position:fixed;inset:0;background:rgba(34,47,40,.55);display:none;align-items:center;justify-content:center;padding:24px;z-index:1000}.modal.show{display:flex}.modalBox{position:relative;max-width:580px;width:100%;max-height:92vh;overflow:auto;background:#f7fbf8;border-radius:28px;padding:24px;box-shadow:0 28px 80px rgba(0,0,0,.25)}.modalClose{position:absolute;right:16px;top:14px;border:0;background:#fff;border-radius:999px;width:38px;height:38px;font-size:20px;font-weight:900;box-shadow:0 5px 15px rgba(0,0,0,.08);z-index:2}.modalCardHost{display:flex;justify-content:center;padding-top:18px}.modalCardHost .promiseCard{width:min(100%,500px);min-height:auto}.helperNote{margin-top:8px;font-size:11px;color:#88958e;line-height:1.5}
+.footer{text-align:center;color:#9aa49f;padding:26px 0 8px;font-size:12px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.heroArt{display:none}.layout{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wrap{padding:12px}.hero{padding:20px}.hero h1{font-size:34px}.steps{grid-template-columns:1fr}.panel{padding:16px}.promiseCard{padding:20px}.promiseRow{grid-template-columns:50px 1fr 36px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div><span class="tag">🌱 나를 위한 약속</span><h1>나의 다짐문 만들기</h1><p>다짐문의 흐름에 맞춰 <b>시작 부분 → ‘하나,’ 약속 → 마무리 부분</b>을 차례로 써 보세요.<br>완성된 다짐문은 카드로 꾸미고 저장할 수 있습니다.</p></div>
+    <div class="heroArt"><div class="paper"><b>나의 다짐문</b><div class="line"></div><div class="line"></div><div class="line"></div><span class="leaf">🌿</span></div></div>
+  </section>
+
+  <div class="steps"><div class="step on">1. 시작 부분</div><div class="step on">2. 하나, 약속하기</div><div class="step on">3. 마무리 부분</div><div class="step">4. 꾸미고 저장하기</div></div>
+
+  <section class="layout">
+    <div class="panel">
+      <h2>✍️ 나의 다짐문 쓰기</h2>
+      <div class="field"><label>다짐 주제</label><div class="topicRow">
+        <button class="topicBtn on" data-topic="우리말 바르게 사용하기">우리말 바르게 사용하기</button>
+        <button class="topicBtn" data-topic="친구 관계">친구 관계</button>
+        <button class="topicBtn" data-topic="학교생활">학교생활</button>
+        <button class="topicBtn" data-topic="생활 습관">생활 습관</button>
+        <button class="topicBtn" data-topic="직접 정하기">직접 정하기</button>
+      </div><div class="helperNote">주제를 고르면 아래 예시가 주제에 맞게 바뀝니다. 내가 쓴 문장은 자동으로 지워지지 않아요.</div></div>
+      <div class="field"><label>이름 또는 별명</label><input id="name" class="input" placeholder="예) 상권"></div>
+
+      <div class="sectionBox">
+        <div class="sectionTitle"><span class="num">1</span> 시작 부분</div>
+        <div class="guide">어떤 마음으로 이 다짐을 하게 되었는지, 앞으로 어떻게 생활하고 싶은지 써 보세요.</div>
+        <textarea id="startText" class="textarea" placeholder="예) 나는 우리 반 친구들과 서로 존중하며 즐겁게 생활하기 위해 다음과 같이 다짐합니다."></textarea>
+        <button class="exampleToggle" data-example-toggle="startExample">💡 시작 부분 예시 보기</button><div id="startExample" class="exampleBox"></div>
+        <div class="quick">
+          <button data-start="나는 우리 반 친구들과 서로 존중하며 즐겁게 생활하기 위해 다음과 같이 다짐합니다.">친구 관계</button>
+          <button data-start="나는 더 책임감 있고 성실한 학교생활을 하기 위해 다음과 같이 다짐합니다.">학교생활</button>
+          <button data-start="나는 나와 다른 사람을 모두 소중히 여기며 생활하기 위해 다음과 같이 다짐합니다.">존중과 배려</button>
+        </div>
+      </div>
+
+      <div class="sectionBox">
+        <div class="sectionTitle"><span class="num">2</span> ‘하나,’로 약속하기</div>
+        <div class="guide">내가 꼭 지키고 싶은 행동을 한 가지씩 구체적으로 적어 보세요. 기본 3개이며 최대 5개까지 추가할 수 있습니다.</div>
+        <div id="promiseRows" class="promiseRows"></div>
+        <button id="addPromise" class="addBtn">＋ ‘하나,’ 약속 더하기</button>
+        <button class="exampleToggle" data-example-toggle="promiseExample">💡 ‘하나,’ 약속 예시 보기</button><div id="promiseExample" class="exampleBox"></div>
+        <div class="quick">
+          <button data-promise="친구의 말을 끝까지 듣겠습니다.">말 끝까지 듣기</button>
+          <button data-promise="친구를 놀리거나 상처 주는 말을 하지 않겠습니다.">고운 말 쓰기</button>
+          <button data-promise="내가 맡은 일은 미루지 않고 끝까지 하겠습니다.">책임감</button>
+          <button data-promise="화가 나도 바로 행동하지 않고 한 번 더 생각하겠습니다.">감정 조절</button>
+        </div>
+      </div>
+
+      <div class="sectionBox">
+        <div class="sectionTitle"><span class="num">3</span> 마무리 부분</div>
+        <div class="guide">위의 다짐을 지키겠다는 마음을 다시 한 번 힘 있게 밝혀 보세요.</div>
+        <textarea id="endText" class="textarea" placeholder="예) 나는 위의 다짐을 마음에 새기고 꾸준히 실천하여 더욱 멋진 내가 되겠습니다."></textarea>
+        <button class="exampleToggle" data-example-toggle="endExample">💡 마무리 부분 예시 보기</button><div id="endExample" class="exampleBox"></div>
+        <div class="quick">
+          <button data-end="나는 위의 다짐을 마음에 새기고 꾸준히 실천하겠습니다.">꾸준히 실천하기</button>
+          <button data-end="나는 오늘의 다짐을 잊지 않고 더 나은 내가 되도록 노력하겠습니다.">더 나은 나</button>
+          <button data-end="나는 말로만 약속하지 않고 작은 행동부터 하나씩 실천하겠습니다.">행동으로 실천</button>
+        </div>
+      </div>
+
+      <h2 style="margin-top:22px">🎨 다짐 카드 꾸미기</h2>
+      <div class="field"><label>배경</label><div class="themeRow"><button class="themeBtn on" data-theme="green">민트</button><button class="themeBtn" data-theme="peach">복숭아</button><button class="themeBtn" data-theme="lav">보라</button><button class="themeBtn" data-theme="sky">하늘</button><button class="themeBtn" data-theme="yellow">노랑</button></div></div>
+      <div class="field"><label>스티커</label><div class="stickerRow"><button class="stickerBtn on" data-sticker="🌿">🌿</button><button class="stickerBtn" data-sticker="⭐">⭐</button><button class="stickerBtn" data-sticker="📚">📚</button><button class="stickerBtn" data-sticker="💛">💛</button><button class="stickerBtn" data-sticker="🚀">🚀</button></div></div>
+      <div class="field"><label>나에게 보내는 한마디</label><input id="toMe" class="input" placeholder="예) 말보다 행동으로 보여 주자!"></div>
+      <div class="actions"><button class="btn soft" id="checkBtn">✓ 문장 점검하기</button><button class="btn soft" id="previewBtn">🔍 완성본 크게 보기</button><button class="btn primary" id="saveBtn">💾 내 다짐 저장하기</button><button class="btn warn" id="resetBtn">↺ 처음부터</button></div>
+      <div id="checkBox" class="checkBox"></div>
+    </div>
+
+    <div class="panel">
+      <h2>🌟 완성된 나의 다짐문</h2>
+      <div class="cardWrap"><div id="promiseCard" class="promiseCard">
+        <div class="decor oneD">🌱</div><div class="decor twoD">✨</div>
+        <div class="cardTop"><span class="cardBadge">나의 다짐문</span><span id="stickerView" class="emoji">🌿</span></div>
+        <div class="cardTitle">나의 다짐</div><div id="nameView" class="nameLine">이름을 적어 주세요</div>
+        <div class="pledgeBlock"><div id="startView" class="startView">시작 부분을 작성해 주세요.</div><div id="listView" class="listView"></div><div id="endView" class="endView">마무리 부분을 작성해 주세요.</div><div class="signature"><div id="dateView" class="signatureDate"></div><div id="signNameView" class="signatureName">이름: 이름을 적어 주세요</div></div></div>
+        <div id="toMeView" class="toMe">나에게 보내는 한마디도 적어 보세요.</div>
+      </div></div>
+    </div>
+  </section>
+  <div class="footer">상권쌤 X 두클래스</div>
+</div>
+<div id="previewModal" class="modal" aria-hidden="true"><div class="modalBox"><button id="modalClose" class="modalClose" aria-label="닫기">×</button><div id="modalCardHost" class="modalCardHost"></div></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const state={theme:'green',sticker:'🌿',topic:'우리말 바르게 사용하기',promises:['','',''],signatureDate:new Date().toISOString().slice(0,10)};
+function formatKoreanDate(iso){const d=iso?new Date(iso+'T00:00:00'):new Date();return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;}
+const themeClasses=['theme-peach','theme-lav','theme-sky','theme-yellow'];
+const topicExamples={
+  '우리말 바르게 사용하기':{start:'나는 우리말의 소중함을 알고 바르고 고운 우리말을 사용하기 위해 다음과 같이 다짐합니다.',promises:['상대방의 기분을 생각하며 고운 말을 사용하겠습니다.','줄임말이나 비속어 대신 알맞은 우리말을 사용하겠습니다.','친구의 말을 끊지 않고 끝까지 듣겠습니다.'],end:'나는 우리말을 소중히 여기고 생활 속에서 바른 말을 꾸준히 실천하겠습니다.'},
+  '친구 관계':{start:'나는 친구들과 서로 존중하고 배려하며 즐겁게 생활하기 위해 다음과 같이 다짐합니다.',promises:['친구의 말을 끝까지 듣겠습니다.','친구를 놀리거나 상처 주는 말을 하지 않겠습니다.','생각이 달라도 상대방의 마음을 존중하겠습니다.'],end:'나는 친구를 존중하는 말과 행동을 꾸준히 실천하겠습니다.'},
+  '학교생활':{start:'나는 책임감 있고 성실한 학교생활을 하기 위해 다음과 같이 다짐합니다.',promises:['수업 시간에 다른 친구의 학습을 방해하지 않겠습니다.','내가 맡은 일은 미루지 않고 끝까지 하겠습니다.','학교의 약속과 규칙을 잘 지키겠습니다.'],end:'나는 내가 세운 약속을 지키며 책임감 있는 학교생활을 하겠습니다.'},
+  '생활 습관':{start:'나는 건강하고 바른 생활 습관을 기르기 위해 다음과 같이 다짐합니다.',promises:['해야 할 일은 미루지 않고 정해진 시간에 하겠습니다.','사용한 물건은 제자리에 정리하겠습니다.','스스로 정한 생활 약속을 꾸준히 지키겠습니다.'],end:'나는 작은 습관부터 하나씩 실천하며 더 나은 생활을 만들어 가겠습니다.'},
+  '직접 정하기':{start:'내가 이루고 싶은 모습을 생각하며 다음과 같이 다짐합니다.',promises:['내가 꼭 지키고 싶은 행동을 구체적으로 적어 보세요.','언제 어떻게 실천할지 알 수 있게 적어 보세요.','내가 실제로 지킬 수 있는 약속을 적어 보세요.'],end:'나는 오늘 세운 다짐을 잊지 않고 꾸준히 실천하겠습니다.'}
+};
+function updateExamples(){const ex=topicExamples[state.topic]||topicExamples['직접 정하기'];$('startExample').textContent='예) '+ex.start;$('promiseExample').innerHTML=ex.promises.map(x=>'• '+escapeHtml(x)).join('<br>');$('endExample').textContent='예) '+ex.end;}
+
+function renderPromiseRows(){
+  $('promiseRows').innerHTML=state.promises.map((v,i)=>`<div class="promiseRow"><div class="one">하나,</div><input class="input promiseInput" data-i="${i}" value="${escapeHtml(v)}" placeholder="예) 친구의 말을 끝까지 듣겠습니다."><button class="remove" data-remove="${i}" ${state.promises.length===1?'disabled':''}>×</button></div>`).join('');
+  document.querySelectorAll('.promiseInput').forEach(el=>el.addEventListener('input',e=>{state.promises[+e.target.dataset.i]=e.target.value;render();saveDraft();}));
+  document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{if(state.promises.length<=1)return;state.promises.splice(+b.dataset.remove,1);renderPromiseRows();render();saveDraft();});
+}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function render(){
+  $('nameView').textContent=$('name').value.trim()||'이름을 적어 주세요';
+  $('dateView').textContent=formatKoreanDate(state.signatureDate);
+  $('signNameView').textContent='이름: '+($('name').value.trim()||'이름을 적어 주세요');
+  $('startView').textContent=$('startText').value.trim()||'시작 부분을 작성해 주세요.';
+  const filled=state.promises.filter(x=>x.trim());
+  $('listView').innerHTML=(filled.length?filled:['지키고 싶은 약속을 적어 주세요.']).map(x=>`<div class="pledgeLine"><b>하나,</b><span>${escapeHtml(x)}</span></div>`).join('');
+  $('endView').textContent=$('endText').value.trim()||'마무리 부분을 작성해 주세요.';
+  $('toMeView').textContent=$('toMe').value.trim()||'나에게 보내는 한마디도 적어 보세요.';
+  $('stickerView').textContent=state.sticker;
+  document.querySelectorAll('.topicBtn').forEach(x=>x.classList.toggle('on',x.dataset.topic===state.topic));
+  updateExamples();
+  const c=$('promiseCard');themeClasses.forEach(x=>c.classList.remove(x));if(state.theme!=='green')c.classList.add('theme-'+state.theme);
+}
+function getData(){return {name:$('name').value,startText:$('startText').value,endText:$('endText').value,toMe:$('toMe').value,promises:[...state.promises],theme:state.theme,sticker:state.sticker,topic:state.topic,signatureDate:state.signatureDate,savedAt:new Date().toISOString()};}
+function saveDraft(){localStorage.setItem('pledgeDraftV2',JSON.stringify(getData()));}
+function loadData(d){$('name').value=d.name||'';$('startText').value=d.startText||'';$('endText').value=d.endText||'';$('toMe').value=d.toMe||'';state.signatureDate=d.signatureDate||new Date().toISOString().slice(0,10);state.topic=d.topic||'우리말 바르게 사용하기';state.promises=Array.isArray(d.promises)&&d.promises.length?d.promises:['','',''];state.theme=d.theme||'green';state.sticker=d.sticker||'🌿';document.querySelectorAll('.themeBtn').forEach(x=>x.classList.toggle('on',x.dataset.theme===state.theme));document.querySelectorAll('.stickerBtn').forEach(x=>x.classList.toggle('on',x.dataset.sticker===state.sticker));renderPromiseRows();render();saveDraft();}
+
+document.querySelectorAll('.topicBtn').forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;render();saveDraft();});
+document.querySelectorAll('[data-example-toggle]').forEach(b=>b.onclick=()=>{const box=$(b.dataset.exampleToggle);box.classList.toggle('show');b.textContent=box.classList.contains('show')?b.textContent.replace('보기','닫기'):b.textContent.replace('닫기','보기');});
+
+function checkPledge(){
+  const start=$('startText').value.trim(), end=$('endText').value.trim(), ps=state.promises.filter(x=>x.trim());
+  const items=[];
+  items.push([!!start,'시작 부분이 작성되어 있나요?']);
+  items.push([ps.length>=2,'실천 약속이 2개 이상 있나요?']);
+  const concrete=ps.length>0&&ps.every(x=>x.length>=8);items.push([concrete,'약속이 너무 짧지 않고 구체적인가요?']);
+  const endings=ps.length>0&&ps.every(x=>/(겠습니다|않겠습니다|하겠습니다|지키겠습니다)[.!]?$/u.test(x));items.push([endings,'‘~하겠습니다’처럼 다짐하는 표현으로 썼나요?']);
+  items.push([!!end,'마무리 부분에서 실천 의지를 다시 밝혔나요?']);
+  $('checkBox').innerHTML='<b>📝 나의 다짐문 점검</b>'+items.map(([ok,t])=>`<div class="checkItem"><strong>${ok?'✅':'⬜'}</strong><span>${t}</span></div>`).join('')+(items.every(x=>x[0])?'<div class="helperNote">좋아요! 다짐문의 흐름이 잘 갖추어졌어요.</div>':'<div class="helperNote">빈 칸이나 덜 구체적인 부분을 한 번 더 살펴보세요.</div>');
+  $('checkBox').classList.add('show');
+}
+$('checkBtn').onclick=checkPledge;
+function openPreview(){render();const host=$('modalCardHost');host.innerHTML='';const clone=$('promiseCard').cloneNode(true);clone.removeAttribute('id');host.appendChild(clone);$('previewModal').classList.add('show');$('previewModal').setAttribute('aria-hidden','false');}
+function closePreview(){$('previewModal').classList.remove('show');$('previewModal').setAttribute('aria-hidden','true');}
+$('previewBtn').onclick=openPreview;$('modalClose').onclick=closePreview;$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))closePreview();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closePreview();});
+$('addPromise').onclick=()=>{if(state.promises.length>=5){alert('약속은 최대 5개까지 만들 수 있어요.');return;}state.promises.push('');renderPromiseRows();render();saveDraft();};
+document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>{$('startText').value=b.dataset.start;render();saveDraft();});
+document.querySelectorAll('[data-end]').forEach(b=>b.onclick=()=>{$('endText').value=b.dataset.end;render();saveDraft();});
+document.querySelectorAll('[data-promise]').forEach(b=>b.onclick=()=>{let i=state.promises.findIndex(x=>!x.trim());if(i<0&&state.promises.length<5){state.promises.push('');i=state.promises.length-1;}if(i<0){alert('약속 칸이 모두 찼어요.');return;}state.promises[i]=b.dataset.promise;renderPromiseRows();render();saveDraft();});
+document.querySelectorAll('.themeBtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.themeBtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');state.theme=b.dataset.theme;render();saveDraft();});
+document.querySelectorAll('.stickerBtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.stickerBtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');state.sticker=b.dataset.sticker;render();saveDraft();});
+['name','startText','endText','toMe'].forEach(id=>$(id).addEventListener('input',()=>{render();saveDraft();}));
+
+function roundRect(ctx,x,y,w,h,r){
+  const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();
+}
+function wrapText(ctx,text,maxWidth){
+  const chars=[...String(text||'')], lines=[];let line='';
+  for(const ch of chars){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;}else line=test;}
+  if(line) lines.push(line);return lines;
+}
+function drawWrapped(ctx,text,x,y,maxWidth,lineHeight){
+  const lines=wrapText(ctx,text,maxWidth);for(const line of lines){ctx.fillText(line,x,y);y+=lineHeight;}return y;
+}
+function themePalette(theme){
+  return {
+    green:['#f2f8f1','#4f815d','#e0efe1','#fff6d9'],
+    peach:['#fff3ed','#a86f59','#f8ded2','#fff1d8'],
+    lav:['#f5f1fb','#76649a','#e9e1f5','#fff4dc'],
+    sky:['#eef7fd','#547f9d','#dcecf8','#fff4d8'],
+    yellow:['#fff9e9','#8d793c','#f5e9b9','#fff0cf']
+  }[theme]||['#f2f8f1','#4f815d','#e0efe1','#fff6d9'];
+}
+function downloadPledgePNG(){
+  const d=getData(), [bg,accent,soft,note]=themePalette(d.theme);
+  const promises=(d.promises||[]).filter(x=>x.trim());
+  const W=1200, PAD=105, contentW=W-PAD*2;
+  const temp=document.createElement('canvas').getContext('2d');
+  temp.font='32px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  const measureBlock=(txt,max,line)=>Math.max(line,wrapText(temp,txt,max).length*line);
+  // 실제 그리기 좌표와 동일한 방식으로 저장 이미지 높이를 계산합니다.
+  let measureY=365;
+  temp.font='32px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  measureY+=measureBlock(d.startText||'시작 부분을 작성해 주세요.',contentW,52)+35;
+  temp.font='31px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  for(const p of (promises.length?promises:['지키고 싶은 약속을 적어 주세요.'])){
+    const lines=wrapText(temp,p,contentW-175);
+    const boxH=Math.max(82,lines.length*48+34);
+    measureY+=boxH+20;
+  }
+  measureY+=18;
+  temp.font='32px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  measureY+=measureBlock(d.endText||'마무리 부분을 작성해 주세요.',contentW,52)+42;
+  measureY+=155; // 나에게 보내는 한마디 영역
+  const H=Math.max(measureY+190,1100); // 날짜·이름 아래 여백까지 확보
+  const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#eef3ef';ctx.fillRect(0,0,W,H);
+  // sheet
+  ctx.fillStyle='#fffdf8';roundRect(ctx,42,42,W-84,H-84,38);ctx.fill();
+  ctx.strokeStyle='#dfe9df';ctx.lineWidth=3;ctx.stroke();
+  // soft top panel
+  ctx.fillStyle=bg;roundRect(ctx,72,72,W-144,205,30);ctx.fill();
+  ctx.textAlign='center';ctx.fillStyle=accent;ctx.font='900 30px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillText('나의 다짐문',W/2,130);
+  ctx.font='56px "Apple Color Emoji","Segoe UI Emoji",sans-serif';ctx.fillText(d.sticker||'🌿',W/2,195);
+  ctx.font='900 52px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillStyle='#26362c';ctx.fillText('나의 다짐',W/2,255);
+  ctx.font='700 27px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillStyle='#7c8980';ctx.fillText(d.name||'이름을 적어 주세요',W/2,303);
+  ctx.textAlign='left';let y=365;
+  // start
+  ctx.fillStyle='#303c34';ctx.font='32px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  y=drawWrapped(ctx,d.startText||'시작 부분을 작성해 주세요.',PAD,y,contentW,52)+35;
+  // promises
+  for(const p of (promises.length?promises:['지키고 싶은 약속을 적어 주세요.'])){
+    const lines=wrapText(ctx,p,contentW-175);const boxH=Math.max(82,lines.length*48+34);
+    ctx.fillStyle=soft;roundRect(ctx,PAD,y,contentW,boxH,22);ctx.fill();
+    ctx.fillStyle=accent;ctx.font='900 31px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillText('하나,',PAD+26,y+49);
+    ctx.fillStyle='#303c34';ctx.font='31px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';let py=y+49;
+    for(const line of lines){ctx.fillText(line,PAD+140,py);py+=48;}
+    y+=boxH+20;
+  }
+  y+=18;ctx.fillStyle='#303c34';ctx.font='32px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  y=drawWrapped(ctx,d.endText||'마무리 부분을 작성해 주세요.',PAD,y,contentW,52)+42;
+  // note to self
+  ctx.fillStyle=note;roundRect(ctx,PAD,y,contentW,105,22);ctx.fill();
+  ctx.fillStyle='#6b5d2c';ctx.font='800 24px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillText('나에게 보내는 한마디',PAD+28,y+35);
+  ctx.fillStyle='#4b493d';ctx.font='27px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+  const noteLines=wrapText(ctx,d.toMe||'나에게 보내는 한마디도 적어 보세요.',contentW-56).slice(0,2);let ny=y+74;for(const l of noteLines){ctx.fillText(l,PAD+28,ny);ny+=38;}
+  y+=155;
+  // signature
+  ctx.textAlign='right';ctx.fillStyle='#4c5a51';ctx.font='28px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillText(formatKoreanDate(d.signatureDate),W-PAD,y);
+  ctx.font='800 31px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';ctx.fillText('이름: '+(d.name||'이름을 적어 주세요'),W-PAD,y+55);
+  const safeName=(d.name||'이름없음').replace(/[\\/:*?"<>|]/g,'_').trim()||'이름없음';
+  const date=d.signatureDate||new Date().toISOString().slice(0,10);
+  canvas.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`나의_다짐문_${safeName}_${date}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);},'image/png');
+}
+$('saveBtn').onclick=()=>{saveDraft();downloadPledgePNG();};
+$('resetBtn').onclick=()=>{if(!confirm('작성한 내용을 모두 지울까요?'))return;$('name').value='';$('startText').value='';$('endText').value='';$('toMe').value='';state.promises=['','',''];state.theme='green';state.sticker='🌿';state.topic='우리말 바르게 사용하기';state.signatureDate=new Date().toISOString().slice(0,10);localStorage.removeItem('pledgeDraftV2');document.querySelectorAll('.themeBtn').forEach(x=>x.classList.toggle('on',x.dataset.theme==='green'));document.querySelectorAll('.stickerBtn').forEach(x=>x.classList.toggle('on',x.dataset.sticker==='🌿'));document.querySelectorAll('.topicBtn').forEach(x=>x.classList.toggle('on',x.dataset.topic==='우리말 바르게 사용하기'));$('checkBox').classList.remove('show');renderPromiseRows();render();};
+renderPromiseRows();const draft=JSON.parse(localStorage.getItem('pledgeDraftV2')||'null');if(draft)loadData(draft);else render();
+</script>
+</body></html>
