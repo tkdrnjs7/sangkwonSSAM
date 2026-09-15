@@ -903,6 +903,200 @@ function pickThumb(obj){
   }
   return'';
 }
+
+
+// 사용자 요청 반영: 아래 낱말들의 사진 검색어를 더 정확하게 고정합니다.
+delete fixedPhotoUrlMap["plant|수박"];
+delete fixedPhotoUrlMap["plant|오이"];
+delete fixedExactPhotoUrlMap["plant|가지|보랏빛 열매를 먹는 채소이기도 한 말."];
+Object.assign(exactPhotoQueryMap, {
+  "nature|흙|땅을 이루는 부드러운 물질.": "soil close up earth ground",
+  "plant|가지|나무나 풀의 줄기에서 뻗어 나온 부분.": "tree branch close up botanical",
+  "plant|가지|보랏빛 열매를 먹는 채소이기도 한 말.": "eggplant aubergine vegetable close up",
+  "plant|솔방울|소나무에 달리는 단단한 열매 모양의 부분.": "pine cone close up on pine tree",
+  "plant|밤|밤나무에 열리는 갈색 열매.": "chestnut burr nuts close up",
+  "plant|수박|껍질이 두껍고 속이 붉은 큰 열매.": "whole watermelon sliced red fruit",
+  "plant|오이|길쭉하고 푸른 열매를 먹는 채소.": "fresh cucumber vegetable close up",
+  "plant|파|길고 가는 잎을 먹는 채소.": "green onion scallion bunch close up",
+  "plant|콩|꼬투리 안에 둥근 씨가 맺히는 식물.": "soybean plant pods close up",
+  "food|콩|여러 가지 먹을거리로 쓰는 콩알.": "soybeans beans close up"
+});
+
+
+
+// 재검수 강화: 헷갈리기 쉬운 단어들의 사진 검색어를 더 정확하게 고정합니다.
+Object.assign(exactPhotoQueryMap, {
+  "body|아빠|아버지를 친근하게 부르는 말.": "father with child portrait",
+  "body|누나|남자가 손위 여자 형제를 부르는 말.": "young woman portrait older sister",
+  "body|오빠|여자가 손위 남자 형제를 부르는 말.": "young man portrait older brother",
+  "body|딸|여자 자식.": "young girl daughter portrait",
+  "body|할머니|아버지나 어머니의 어머니.": "grandmother elderly woman portrait",
+  "body|혀|입안에서 맛을 느끼고 말을 돕는 부분.": "human tongue closeup",
+  "body|이|음식을 씹는 단단한 몸의 부분.": "human teeth closeup",
+  "body|귀|소리를 듣는 몸의 부분.": "human ear closeup",
+  "body|코|냄새를 맡고 숨을 쉬는 얼굴의 부분.": "human nose closeup",
+  "body|입|먹고 말하는 데 쓰는 얼굴의 부분.": "human mouth lips closeup",
+  "body|손목|손과 팔이 이어지는 부분.": "human wrist closeup",
+  "body|손바닥|손 안쪽의 넓고 평평한 부분.": "human palm open hand",
+  "body|손등|손의 바깥쪽 부분.": "back of human hand closeup",
+  "body|가슴|몸통의 앞쪽 위 부분.": "human chest torso closeup",
+  "body|배|몸통의 앞쪽 가운데 부분.": "human abdomen torso closeup",
+  "body|등|몸통의 뒤쪽 부분.": "human back torso closeup",
+  "body|허리|가슴과 엉덩이 사이의 잘록한 부분.": "human waist torso closeup",
+  "body|다리|몸을 받치고 걷게 하는 부분.": "human legs standing closeup",
+  "body|무릎|허벅지와 종아리가 만나는 관절 부분.": "human knee closeup",
+  "body|발|다리 끝에서 땅을 딛는 부분.": "human foot closeup",
+  "body|발목|다리와 발이 이어지는 부분.": "human ankle closeup",
+  "body|발가락|발 끝에서 갈라진 부분.": "human toes closeup",
+
+  "home|마당|집 앞이나 뒤의 넓은 빈터.": "house yard courtyard",
+  "home|뜰|집이나 건물 앞뒤에 있는 넓은 공간.": "house courtyard garden yard",
+  "home|창|빛이나 바람이 들어오도록 벽에 낸 곳.": "house window exterior",
+  "home|지붕|비나 눈을 막도록 집 위를 덮은 부분.": "house roof closeup",
+  "home|부엌|음식을 만들고 설거지하는 공간.": "kitchen interior",
+  "home|구들|방바닥을 따뜻하게 데우는 옛 난방 시설.": "korean ondol floor traditional room",
+  "home|가마솥|아궁이에 걸어 쓰는 크고 무거운 솥.": "traditional cauldron iron pot korean",
+  "home|숟가락|음식을 떠먹는 데 쓰는 도구.": "metal spoon close up",
+  "home|칼|물건을 베거나 써는 날카로운 도구.": "kitchen knife close up",
+  "home|가위|종이나 천 등을 자르는 도구.": "scissors close up",
+  "home|바늘|실을 꿰어 옷감 등을 꿰매는 도구.": "sewing needle thread close up",
+  "home|쓰레받기|쓸어 모은 쓰레기를 받아 내는 도구.": "dustpan cleaning tool",
+  "home|보자기|물건을 싸거나 덮는 네모난 천.": "wrapping cloth fabric square",
+  "home|베개|잠잘 때 머리를 받치는 물건.": "pillow on bed",
+  "home|이불|잠잘 때 몸 위에 덮는 물건.": "blanket bedding on bed",
+  "home|돗자리|바닥에 펴서 앉거나 눕는 자리.": "straw mat picnic mat",
+  "home|치마|허리 아래를 둘러 입는 옷.": "skirt clothing closeup",
+  "home|바지|두 다리를 따로 넣어 입는 옷.": "pants trousers clothing",
+  "home|저고리|한복의 윗옷.": "hanbok jeogori traditional korean clothes",
+  "home|신|발에 신는 물건을 이르는 말.": "shoes footwear pair",
+  "home|옷걸이|옷을 걸어 두는 도구.": "clothes hanger",
+  "home|보따리|물건을 보자기 등에 싸서 꾸린 것.": "cloth bundle wrapping bundle",
+  "home|꾸러미|여러 물건을 한데 싸거나 묶어 놓은 것.": "bundle package tied bundle",
+  "home|짐|옮기기 위해 싸거나 꾸린 물건.": "luggage bags bundle",
+  "food|쌀|벼의 껍질을 벗긴 알곡.": "rice grains uncooked bowl",
+  "home|실|옷감을 짜거나 바느질하는 데 쓰는 가는 줄.": "thread spool sewing",
+  "home|빗|머리카락을 가지런히 하는 도구.": "hair comb close up",
+  "home|거울|얼굴이나 모습을 비추어 보는 물건.": "mirror object close up",
+  "home|빗자루|바닥을 쓸어 내는 도구.": "broom cleaning tool",
+  "home|옷|몸에 입는 물건.": "clothes shirt clothing",
+
+  "animal|꿩|수컷의 깃털이 화려한 들새.": "pheasant male bird",
+
+  "nature|흙|땅을 이루는 부드러운 물질.": "soil close up earth ground",
+  "plant|가지|나무나 풀의 줄기에서 뻗어 나온 부분.": "tree branch twig botanical",
+  "plant|가지|보랏빛 열매를 먹는 채소이기도 한 말.": "eggplant aubergine vegetable close up",
+  "plant|솔방울|소나무에 달리는 단단한 열매 모양의 부분.": "pine cone close up",
+  "plant|밤|밤나무에 열리는 갈색 열매.": "chestnut burr nuts close up",
+  "plant|수박|껍질이 두껍고 속이 붉은 큰 열매.": "watermelon sliced whole fruit",
+  "plant|오이|길쭉하고 푸른 열매를 먹는 채소.": "fresh cucumber vegetable close up",
+  "plant|파|길고 가는 잎을 먹는 채소.": "green onion scallion bunch close up",
+  "plant|콩|꼬투리 안에 둥근 씨가 맺히는 식물.": "soybean plant pods close up",
+  "food|콩|꼬투리 안에 둥근 씨가 맺히는 곡식.": "soybeans beans close up bowl",
+
+  "play|팽이|축을 중심으로 빙글빙글 돌리는 장난감.": "spinning top toy",
+  "play|제기|발로 차며 노는 작은 놀이 도구.": "jegi korean shuttlecock toy",
+  "play|딱지|종이를 접어 만든 납작한 놀이 도구.": "korean ddakji folded paper toy",
+  "play|술래|놀이에서 다른 사람을 잡거나 찾는 역할.": "children tag game seeker",
+  "play|꼬리잡기|줄지어 서서 상대편의 꼬리를 잡는 놀이.": "children tail chasing game",
+  "play|땅따먹기|선을 그어 자기 땅을 넓혀 가는 놀이.": "children ground drawing game hopscotch",
+  "play|고무줄놀이|고무줄을 걸어 놓고 노래에 맞춰 뛰는 놀이.": "children elastic band jumping game",
+  "play|소꿉놀이|살림하는 흉내를 내며 하는 놀이.": "children pretend play kitchen",
+  "play|말타기놀이|사람이나 놀이기구를 말처럼 타는 놀이.": "children piggyback horse play",
+  "play|기차놀이|줄지어 기차처럼 움직이며 하는 놀이.": "children train pretend play line"
+});
+
+
+
+// 2차 재검수: 헷갈리기 쉬운 사진용 검색어를 더 구체적으로 다시 고정합니다.
+Object.assign(exactPhotoQueryMap, {
+  "body|아빠|아버지를 친근하게 부르는 말.": "father with child portrait photo",
+  "body|누나|남자가 손위 여자 형제를 부르는 말.": "older sister young woman portrait photo",
+  "body|오빠|여자가 손위 남자 형제를 부르는 말.": "older brother young man portrait photo",
+  "body|딸|여자 자식.": "daughter young girl portrait photo",
+  "body|할머니|아버지나 어머니의 어머니.": "grandmother elderly woman portrait photo",
+  "body|혀|입안에서 맛을 느끼고 말을 돕는 부분.": "human tongue close up photo",
+  "body|이|음식을 씹는 단단한 몸의 부분.": "human teeth close up photo",
+  "body|귀|소리를 듣는 몸의 부분.": "human ear close up photo",
+  "body|코|냄새를 맡고 숨을 쉬는 얼굴의 부분.": "human nose close up photo",
+  "body|입|먹고 말하는 데 쓰는 얼굴의 부분.": "human mouth close up photo",
+  "body|손목|손과 팔이 이어지는 부분.": "human wrist close up photo",
+  "body|손바닥|손 안쪽의 넓고 평평한 부분.": "open human palm close up photo",
+  "body|손등|손의 바깥쪽 부분.": "back of human hand close up photo",
+  "body|가슴|몸통의 앞쪽 위 부분.": "human chest torso close up photo",
+  "body|배|몸통의 앞쪽 가운데 부분.": "human abdomen torso close up photo",
+  "body|등|몸통의 뒤쪽 부분.": "human back torso close up photo",
+  "body|허리|가슴과 엉덩이 사이의 잘록한 부분.": "human waist torso close up photo",
+  "body|다리|몸을 받치고 걷게 하는 부분.": "human legs close up photo",
+  "body|무릎|허벅지와 종아리가 만나는 관절 부분.": "human knee close up photo",
+  "body|발|다리 끝에서 땅을 딛는 부분.": "human foot close up photo",
+  "body|발목|다리와 발이 이어지는 부분.": "human ankle close up photo",
+  "body|발가락|발 끝에서 갈라진 부분.": "human toes close up photo",
+
+  "home|마당|집 앞이나 뒤의 넓은 빈터.": "house yard courtyard photo",
+  "home|뜰|집이나 건물 앞뒤에 있는 넓은 공간.": "house courtyard garden photo",
+  "home|창|빛이나 바람이 들어오도록 벽에 낸 곳.": "house window exterior photo",
+  "home|지붕|비나 눈을 막도록 집 위를 덮은 부분.": "house roof exterior photo",
+  "home|부엌|음식을 만들고 설거지하는 공간.": "kitchen interior photo",
+  "home|구들|방바닥을 따뜻하게 데우는 옛 난방 시설.": "traditional korean ondol floor room photo",
+  "home|가마솥|아궁이에 걸어 쓰는 크고 무거운 솥.": "traditional korean iron cauldron pot photo",
+  "home|숟가락|음식을 떠먹는 데 쓰는 도구.": "metal spoon close up photo",
+  "home|칼|물건을 베거나 써는 날카로운 도구.": "kitchen knife close up photo",
+  "home|가위|종이나 천 등을 자르는 도구.": "scissors close up photo",
+  "home|바늘|실을 꿰어 옷감 등을 꿰매는 도구.": "sewing needle close up photo",
+  "home|쓰레받기|쓸어 모은 쓰레기를 받아 내는 도구.": "dustpan cleaning tool photo",
+  "home|보자기|물건을 싸거나 덮는 네모난 천.": "wrapping cloth square fabric photo",
+  "home|베개|잠잘 때 머리를 받치는 물건.": "pillow bedding photo",
+  "home|이불|잠잘 때 몸 위에 덮는 물건.": "blanket bedding photo",
+  "home|돗자리|바닥에 펴서 앉거나 눕는 자리.": "straw mat picnic mat photo",
+  "home|치마|허리 아래를 둘러 입는 옷.": "skirt clothing photo",
+  "home|바지|두 다리를 따로 넣어 입는 옷.": "pants trousers clothing photo",
+  "home|저고리|한복의 윗옷.": "hanbok jeogori photo",
+  "home|신|발에 신는 물건을 이르는 말.": "shoes footwear pair photo",
+  "home|옷걸이|옷을 걸어 두는 도구.": "clothes hanger photo",
+  "home|보따리|물건을 보자기 등에 싸서 꾸린 것.": "cloth bundle wrapped photo",
+  "home|꾸러미|여러 물건을 한데 싸거나 묶어 놓은 것.": "tied bundle package photo",
+  "home|짐|옮기기 위해 싸거나 꾸린 물건.": "luggage bags bundle photo",
+  "home|실|옷감을 짜거나 바느질하는 데 쓰는 가는 줄.": "thread spool sewing photo",
+  "home|빗|머리카락을 가지런히 하는 도구.": "hair comb object photo",
+  "home|거울|얼굴이나 모습을 비추어 보는 물건.": "mirror object photo",
+  "home|빗자루|바닥을 쓸어 내는 도구.": "broom cleaning tool photo",
+  "home|옷|몸에 입는 물건.": "clothes shirt garment photo",
+
+  "food|쌀|벼의 껍질을 벗긴 알곡.": "uncooked rice grains bowl photo",
+  "animal|꿩|수컷의 깃털이 화려한 들새.": "male pheasant bird photo",
+  "animal|망아지|말의 새끼.": "foal young horse photo",
+
+  "nature|샘|땅속에서 물이 솟아 나오는 곳.": "natural spring water source photo",
+  "nature|웅덩이|움푹 팬 곳에 물이 고인 곳.": "water puddle on ground photo",
+  "nature|기슭|산이나 언덕의 비탈진 아랫부분.": "foot of mountain hillside photo",
+  "nature|흙|땅을 이루는 부드러운 물질.": "soil earth close up photo",
+
+  "plant|줄기|식물의 몸을 받치고 물과 양분이 오가는 부분.": "plant stem botanical photo",
+  "plant|뿌리|땅속에서 식물을 붙잡고 물을 빨아들이는 부분.": "plant roots in soil photo",
+  "plant|솔잎|소나무의 가늘고 뾰족한 잎.": "pine needles close up photo",
+  "plant|참외|노란 껍질에 흰 줄이 있는 달콤한 열매.": "korean melon chamoe photo",
+  "plant|가지|나무나 풀의 줄기에서 뻗어 나온 부분.": "tree branch twig photo",
+  "plant|가지|보랏빛 열매를 먹는 채소이기도 한 말.": "eggplant vegetable aubergine photo",
+  "plant|솔방울|소나무에 달리는 단단한 열매 모양의 부분.": "pine cone close up photo",
+  "plant|밤|밤나무에 열리는 갈색 열매.": "chestnut fruit nut photo",
+  "plant|수박|껍질이 두껍고 속이 붉은 큰 열매.": "watermelon whole sliced fruit photo",
+  "plant|오이|길쭉하고 푸른 열매를 먹는 채소.": "cucumber vegetable close up photo",
+  "plant|파|길고 가는 잎을 먹는 채소.": "green onion scallion bunch photo",
+  "plant|콩|꼬투리 안에 둥근 씨가 맺히는 식물.": "soybean plant pods photo",
+  "food|콩|꼬투리 안에 둥근 씨가 맺히는 곡식.": "soybeans beans bowl photo",
+
+  "play|팽이|축을 중심으로 빙글빙글 돌리는 장난감.": "spinning top toy photo",
+  "play|제기|발로 차며 노는 작은 놀이 도구.": "jegi shuttlecock toy photo",
+  "play|딱지|종이를 접어 만든 납작한 놀이 도구.": "korean ddakji folded paper toy photo",
+  "play|술래|놀이에서 다른 사람을 잡거나 찾는 역할.": "children tag game seeker photo",
+  "play|꼬리잡기|줄지어 서서 상대편의 꼬리를 잡는 놀이.": "children tail chasing game photo",
+  "play|땅따먹기|선을 그어 자기 땅을 넓혀 가는 놀이.": "children ground drawing game photo",
+  "play|고무줄놀이|고무줄을 걸어 놓고 노래에 맞춰 뛰는 놀이.": "children elastic band jumping game photo",
+  "play|소꿉놀이|살림하는 흉내를 내며 하는 놀이.": "children pretend play kitchen photo",
+  "play|말타기놀이|사람이나 놀이기구를 말처럼 타는 놀이.": "children piggyback horse play photo",
+  "play|기차놀이|줄지어 기차처럼 움직이며 하는 놀이.": "children train pretend play line photo"
+});
+
 async function commons(q){
   return pickThumb(await fetchJson('https://commons.wikimedia.org/w/api.php?origin=*&action=query&format=json&generator=search&gsrnamespace=6&gsrsearch='+encodeURIComponent(q)+'&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=640'));
 }
